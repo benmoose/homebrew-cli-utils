@@ -1,0 +1,24 @@
+# macos
+.DS_Store
+
+# Homebrew build artifacts
+*.bottle*
+*.tar.gz
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# Shell history
+.history
+
+# IDE
+.idea/
+.cursor/
+.vscode/
+
+# Claude
+.claude/**/*.local.*
