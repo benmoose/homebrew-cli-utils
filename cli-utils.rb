@@ -14,7 +14,6 @@ class CliUtils < Formula
   depends_on "jq"
   depends_on "gh"
   depends_on "tree"
-  depends_on "uuidgen"
 
   # depends_on "cmake" => :build
 
@@ -27,7 +26,7 @@ class CliUtils < Formula
   def install
     libexec.install "cli-utils.sh"
 
-    commands = ["uuid"]
+    commands = ["uuid", "pwt", "vj"]
     commands.each do |cmd|
       bin.install_symlink libexec/"cli-utils.sh" => cmd
     end
