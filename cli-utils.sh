@@ -3,6 +3,7 @@
 # ,err prints an error message to stderr
 function ,err {
 	declare -r red=$(\tput setaf 1) ns=$(\tput sgr0)
+
 	printf "${red}%s${ns}\n" "${*}" 1>&2
 }
 
@@ -37,8 +38,7 @@ function uuid {
 function pwt {
 	if ! which tree &> /dev/null; then ,err "$0: tree not found in PATH"; return 127; fi
 
-	readonly level="${1:-1}"
-	tree -L "${level}" --condense --gitignore .
+	tree -L "${1:-1}" --condense --gitignore .
 }
 
 # vj path validate JSON file.
@@ -47,4 +47,15 @@ function vj {
 
 	jq empty "${@}"
 }
+
+# Get the name of the command that called this script
+COMMAND=$(basename "$0")
+
+# Execute the function matching that name, passing all arguments
+if declare -f "${COMMAND}" > /dev/null; then
+  "${COMMAND}" "$@"
+else
+  ,err "$0: function ${COMMAND} not found."
+  exit 1
+fi
 
