@@ -24,15 +24,22 @@ class CliUtils < Formula
   # end
 
   def install
-    libexec.install "cli-utils.sh"
+    (packageshare/"functions").install Dir["functions/*.zsh"]
+  end
 
-    commands = ["uuid", "pwt", "vj"]
-    commands.each do |cmd|
-      bin.install_symlink libexec/"cli-utils.sh" => cmd
-    end
+  def caveats
+    <<EOS
+      To load your cli-utils functions, add this to your ~/.zshrc:
+
+      for f in #{HOMEBREW_PREFIX}/share/cli-utils/functions/*.zsh; do
+        source "$f"
+      done
+
+      Then restart your shell or run: source ~/.zshrc
+    EOS
   end
 
   test do
-    assert_match /[a-z0-9-]+/, shell_output("#{bin}/uuid")
+    system "zsh", "-c", "ls #{pkgshare}/functions"
   end
 end
