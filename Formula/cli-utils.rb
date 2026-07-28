@@ -24,14 +24,25 @@ class CliUtils < Formula
   test do
     (testpath/".zshrc").write <<~EOS
       for f in #{pkgshare}/functions/*.zsh; do
-        source "$f"
+        source "${f}"
       done
     EOS
 
-    output = shell_output("zsh -c 'source #{testpath}/.zshrc && type com cos rbm uuid'")
-    assert_match "com is a shell function", output
-    assert_match "cos is a shell function", output
-    assert_match "rbm is a shell function", output
-    assert_match "uuid is a shell function", output
+    # system "source" "#{testpath}/.zshrc"
+    func_names.each do |name|
+      assert_match "#{name} is a shell function", shell_output("zsh -c 'type #{name}'")
+    end
+
+    uuid_out = shell_output("zsh -c 'uuid'")
+    assert_match(/[09-af]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/, uuid_out)
+
+    err_out = shell_out("zsh -c ',err foobar'")
+    assert_match("foobar\n", err_out)
+  end
+
+  private
+
+  private_class_method def self.func_names
+    %i(com cos rbm uuid)
   end
 end
