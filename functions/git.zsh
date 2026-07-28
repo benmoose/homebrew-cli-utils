@@ -45,7 +45,7 @@ function ,git_repo {
 }
 
 function ,git_main_branch {
-    if ! ,git_repo; return 1; fi
+    if ! ,git_repo; then return 1; fi
 
     declare ref remote
     for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
@@ -68,7 +68,7 @@ function ,git_main_branch {
 }
 
 function ,git_current_branch {
-    if ! ,git_repo; return 1; fi
+    if ! ,git_repo; then return 1; fi
 
     command git symbolic-ref --short --quiet HEAD 2>/dev/null
 }
