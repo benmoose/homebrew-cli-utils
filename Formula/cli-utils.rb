@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Custom utility commands."
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.4.tar.gz"
-  sha256 "4248d2f8b2226546d9a0196f8524e4c75c9fb43644a613dfabe0d72e7a8e8bcf"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.5.tar.gz"
+  sha256 "78f27ffefb70fc6c308652adc491891c53b6e0ba9b27c419cecf7c5ce83a2baf"
   license "GPL-3.0-or-later"
 
   depends_on :macos
