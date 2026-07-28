@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+set -o pipefail
+
 function ,err {
     declare -r RED="$(\tput setaf 1)" NS="$(\tput sgr0)"
 

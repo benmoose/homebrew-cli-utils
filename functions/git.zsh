@@ -38,7 +38,7 @@ function rbm {
  }
 
 function ,git_repo {
-    if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+    if ! command git rev-parse --git-dir --quiet &>/dev/null; then
         [[ "$1" != "-q" ]] && ,err "$0: not in git repository"
         return 1
     fi
@@ -47,11 +47,28 @@ function ,git_repo {
 function ,git_main_branch {
     if ! ,git_repo; return 1; fi
 
-    git rev-parse --verify main &>/dev/null && echo main || echo master
+    declare ref remote
+    for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
+        if command git show-ref --verify --quiet "${ref}"; then
+            echo "${ref:t}"
+            return 0
+        fi
+    done
+
+    for remote in origin upstream; do
+        ref="$(command git rev-parse --abbrev-ref ${remote}/HEAD 2>/dev/null)"
+        if [[ "${ref}" == "${remote}/*" ]]; then
+            echo "${ref#${remote}/}"
+            return 0
+        fi
+    done
+
+    echo "master"
+    return 1
 }
 
 function ,git_current_branch {
     if ! ,git_repo; return 1; fi
 
-    git symbolic-ref --short HEAD 2>/dev/null
+    command git symbolic-ref --short --quiet HEAD 2>/dev/null
 }
