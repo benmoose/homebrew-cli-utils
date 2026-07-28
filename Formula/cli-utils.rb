@@ -5,8 +5,7 @@ class CliUtils < Formula
   sha256 "4248d2f8b2226546d9a0196f8524e4c75c9fb43644a613dfabe0d72e7a8e8bcf"
   license "GPL-3.0-or-later"
 
-  depends_on :macos  
-  depends_on "uuidgen"
+  depends_on :macos
 
   def install
     (packageshare/"functions").install Dir["functions/*.zsh"]
