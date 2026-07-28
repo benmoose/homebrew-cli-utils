@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "A collection of useful CLI commands."
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.6.tar.gz"
-  sha256 "a7486586e5874551be0b78d631c4d3525af0735f5563cf3a3aa068c670b27b07"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.7.tar.gz"
+  sha256 "aa8c6a2d228cd8c0eaf093a8ec4b13f1229fe0ffe0497125d2c3ae8bccad5e38"
   license "GPL-3.0-or-later"
 
   depends_on :macos
