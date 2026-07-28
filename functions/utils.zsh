@@ -16,6 +16,7 @@ function ,spinner {
 
     printf "${CIVIS}"  # hide cursor
     \trap 'printf "${CNORM}"' EXIT ERR
+
     while \kill -0 "${pid_arg}" 2>/dev/null; do
         printf "${CR}%s%s${NS}" "${style_arg}" "${frames[$((i % ${#frames[@]} + 1))]}" "${msg_arg}"
         ((i++))
