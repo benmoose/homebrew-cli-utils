@@ -17,8 +17,7 @@ function cos {
 function rbm {
 	if ! ,is_git_repo; then return 1; fi
 
-	declare -r main_b="$(,git_main_branch)" curr_b="$(,git_current_branch)" \
-		CR="$(\tput cr)" EL="$(\tput el)" NS="$(\tput sgr0)" RED="$(\tput setaf 1)" GREEN="$(\tput setaf 2)"
+	declare -r main_b="$(,git_main_branch)" curr_b="$(,git_current_branch)"
 
 	if [[ "${main_b}" == "${curr_b}" ]]; then
 		,err "$0: not on a feature branch"

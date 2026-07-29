@@ -12,12 +12,11 @@ class CliUtils < Formula
     prefix.install_metafiles
 
     zsh_function.install Dir["src/functions/*.zsh"]
-    zsh_function.install "src/global.zsh" => "_global.zsh"
+    zsh_function.install "src/global.zsh"
 
     (share/name).write <<~EOS
-      # #{name} v#{version.to_s}      
-      source #{zsh_function}/_global.zsh
-      for f in #{zsh_function}/*.zsh; do
+      # #{name} v#{version.to_s}
+      for f in source #{zsh_function}/*.zsh; do
         source ${f}
       done
     EOS
@@ -27,7 +26,7 @@ class CliUtils < Formula
     <<~EOS
       If the functions are not found automatically, add this to your ~/.zshrc
 
-      \tsource #{opt_share}/#{name}
+      `source #{opt_share}/#{name}`
 
       Then restart your terminal or run `source ~/.zshrc`.
     EOS
