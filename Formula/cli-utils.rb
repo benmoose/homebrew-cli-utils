@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.10.tar.gz"
-  sha256 "bf3ce1feccf27d76638d5a76b6e67c87e8990c16f4491cb9251a13f5e4abcc20"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.11.tar.gz"
+  sha256 "0df33b40ac050b120f44d00b9d6d56a947687cc40fbab454733b3e098a0a176b"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -12,7 +12,7 @@ class CliUtils < Formula
     prefix.install_metafiles
 
     zsh_function.install Dir["functions/*.zsh"]
-    zsh_function.install "functions/utils/styles.zsh"
+    zsh_function.install Dir["functions/utils/*.zsh"]
 
     (share/name).write <<~EOS
       # #{name} v#{version.to_s}      
