@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+alias uid="uuid"
+
 function uuid {
 	if ! which uuidgen &>/dev/null; then return 1; fi
 

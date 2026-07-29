@@ -43,9 +43,9 @@ function rbm {
 function vr {
 	if ! ,is_git_repo; then return 1; fi
 
-	declare -r branch_arg="${1}"
+	declare -r branch_arg="${1:-$(,git_current_branch)}"
 
-	gh repo view --branch ${branch_arg:-$(,git_current_branch)} --web >/dev/null
+	(gh repo view --branch ${branch_arg} --web) >/dev/null
 }
 
 function ,is_git_repo {
