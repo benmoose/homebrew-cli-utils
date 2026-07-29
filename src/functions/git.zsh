@@ -41,10 +41,26 @@ function rbm {
 
 function vr {
 	if ! ,is_git_repo; then return 1; fi
+	if ! which gh &>/dev/null; then ,err "$0: command gh not found"; return 127; fi
 
 	declare -r branch_arg="${1:-$(,git_current_branch)}"
 
 	(gh repo view --branch ${branch_arg} --web) >/dev/null
+}
+
+function vpr {
+	if ! ,is_git_repo; then return 1; fi
+	if ! which gh &>/dev/null; then ,err "$0: command gh not found"; return 127; fi
+
+	setopt LOCAL_OPTIONS LOCAL_TRAPS NO_MONITOR
+
+	(gh pr view --web) >/dev/null & local pid="${!}"
+	trap 'kill "${pid}"; return 130' INT TERM
+
+	,spinner "${pid}" "Opening pull request... "
+	if wait "${pid}" 2>/dev/null; then
+		printf "%s%s✓%s Opened pull request.\n" "${CR}${EL}" "${GREEN}" "${NS}" 
+	fi
 }
 
 function ,is_git_repo {
