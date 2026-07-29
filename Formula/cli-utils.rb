@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.14.tar.gz"
-  sha256 "7577c01218eca04d6a58d29d076a6dea0653ade699eab51188ed02fac8583603"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.15.tar.gz"
+  sha256 "4b4f49c5315daee505b3b9768ca0886af14ef3f89b319de2a9555fa1a5e278ec"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -48,6 +48,6 @@ class CliUtils < Formula
   private
 
   def func_names
-    [:com, :cos, :rbm, :uuid]
+    [:com, :cos, :rbm, :vr, :vpr, :uuid]
   end
 end
