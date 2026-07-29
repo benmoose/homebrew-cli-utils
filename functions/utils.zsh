@@ -3,23 +3,23 @@
 set -o pipefail
 
 function ,err {
-    declare -r RED="$(\tput setaf 1)" NS="$(\tput sgr0)"
+	declare -r RED="$(\tput setaf 1)" NS="$(\tput sgr0)"
 
-    printf "%s%s%s\n" "${RED}" "${*}" "${NS}" 1>&2
+	printf "%s%s%s\n" "${RED}" "${*}" "${NS}" 1>&2
 }
 
 function ,spinner {
-    declare -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-$(\tput setaf 6)}" \
-        CIVIS="$(\tput civis)" CNORM="$(\tput cnorm)" CR="$(\tput cr)" EL="$(\tput el)" NS="$(\tput sgr0)"
-    declare -ar frames=("⠄" "⠆" "⠇" "⠋" "⠙" "⠸" "⠰" "⠠" "⠰" "⠸" "⠙" "⠋" "⠇" "⠆")
-    declare -i i
+	declare -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-$(\tput setaf 6)}" \
+		CIVIS="$(\tput civis)" CNORM="$(\tput cnorm)" CR="$(\tput cr)" EL="$(\tput el)" NS="$(\tput sgr0)"
+	declare -ar frames=("⠄" "⠆" "⠇" "⠋" "⠙" "⠸" "⠰" "⠠" "⠰" "⠸" "⠙" "⠋" "⠇" "⠆")
+	declare -i i
 
-    printf "${CIVIS}"  # hide cursor
-    \trap 'printf "${CNORM}"' EXIT ERR
+	printf "${CIVIS}"  # hide cursor
+	\trap 'printf "${CNORM}"' EXIT ERR
 
-    while \kill -0 "${pid_arg}" 2>/dev/null; do
-        printf "${CR}%s%s${NS}" "${style_arg}" "${frames[$((i % ${#frames[@]} + 1))]}" "${msg_arg}"
-        ((i++))
-        \sleep 0.045
-    done
+	while \kill -0 "${pid_arg}" 2>/dev/null; do
+		printf "${CR}%s%s${NS}" "${style_arg}" "${frames[$((i % ${#frames[@]} + 1))]}" "${msg_arg}"
+		((i++))
+		\sleep 0.045
+	done
 }
