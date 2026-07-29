@@ -25,11 +25,11 @@ class CliUtils < Formula
 
   def caveats
     <<~EOS
-      To load your cli-utils functions, add this to your ~/.zshrc:
+      If the functions are not found automatically, add this to your ~/.zshrc
 
-      source #{opt_share}/#{name}
+      \tsource #{opt_share}/#{name}
 
-      Then restart your shell or run `source ~/.zshrc`
+      Then restart your terminal or run `source ~/.zshrc`.
     EOS
   end
 
