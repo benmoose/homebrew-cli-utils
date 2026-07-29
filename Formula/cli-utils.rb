@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.11.tar.gz"
-  sha256 "0df33b40ac050b120f44d00b9d6d56a947687cc40fbab454733b3e098a0a176b"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.12.tar.gz"
+  sha256 "66626297b2542481896441456736d49df49d960420b0d0dbb45ddab4e0a6c3f0"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -12,11 +12,11 @@ class CliUtils < Formula
     prefix.install_metafiles
 
     zsh_function.install Dir["src/functions/*.zsh"]
-    zsh_function.install "src/global.zsh" => "_glob.zsh"
+    zsh_function.install "src/global.zsh" => "_global.zsh"
 
     (share/name).write <<~EOS
       # #{name} v#{version.to_s}      
-      source #{zsh_function}/_glob.zsh
+      source #{zsh_function}/_global.zsh
       for f in #{zsh_function}/*.zsh; do
         source ${f}
       done
