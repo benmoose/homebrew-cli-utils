@@ -45,12 +45,13 @@ function vr {
 
 	declare -r branch_arg="${1}"
 
-	gh repo view --branch ${branch_arg:-$(,git_current_branch)} --web
+	gh repo view --branch ${branch_arg:-$(,git_current_branch)} --web >/dev/null
 }
 
 function ,is_git_repo {
 	if ! git rev-parse --git-dir &>/dev/null; then
 		[[ "$1" != "-q" ]] && ,err "$0: not in git repository"
+
 		return 1
 	fi
 }
@@ -58,8 +59,7 @@ function ,is_git_repo {
 function ,git_repo {
 	if ! ,is_git_repo; then return 1; fi
 
-	declare -r path="$(git rev-parse --show-toplevel --quiet)"
-	echo ${path##*/}
+	basename $(git rev-parse --show-toplevel --quiet)
 }
 
 function ,git_main_branch {
@@ -69,12 +69,13 @@ function ,git_main_branch {
 	for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
 		if git show-ref --verify --quiet "${ref}" 2>/dev/null; then
 			echo "${ref:t}"
+
 			return 0
 		fi
 	done
 
 	for remote in origin upstream; do
-		ref="$(git rev-parse --abbrev-ref --quiet ${remote}/HEAD 2>/dev/null)"
+		ref=$(git rev-parse --abbrev-ref --quiet ${remote}/HEAD 2>/dev/null)
 		if [[ "${ref}" == ${remote}/* ]]; then
 			echo "${ref#${remote}/}"
 			return 0

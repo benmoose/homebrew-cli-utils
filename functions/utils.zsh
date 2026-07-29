@@ -3,14 +3,14 @@
 set -o pipefail
 
 function ,err {
-	declare -r RED="$(\tput setaf 1)" NS="$(\tput sgr0)"
+	# declare -r RED="$(\tput setaf 1)" NS="$(\tput sgr0)"
 
 	printf "%s%s%s\n" "${RED}" "${*}" "${NS}" 1>&2
 }
 
 function ,spinner {
-	declare -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-$(\tput setaf 6)}" \
-		CIVIS="$(\tput civis)" CNORM="$(\tput cnorm)" CR="$(\tput cr)" EL="$(\tput el)" NS="$(\tput sgr0)"
+	declare -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
+		# CIVIS="$(\tput civis)" CNORM="$(\tput cnorm)" CR="$(\tput cr)" EL="$(\tput el)" NS="$(\tput sgr0)"
 	declare -ar frames=("⠄" "⠆" "⠇" "⠋" "⠙" "⠸" "⠰" "⠠" "⠰" "⠸" "⠙" "⠋" "⠇" "⠆")
 	declare -i i
 

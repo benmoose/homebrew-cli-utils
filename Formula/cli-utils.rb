@@ -12,9 +12,11 @@ class CliUtils < Formula
     prefix.install_metafiles
 
     zsh_function.install Dir["functions/*.zsh"]
+    zsh_function.install "functions/utils/styles.zsh"
 
     (share/name).write <<~EOS
-      # #{name} v#{version.to_s}
+      # #{name} v#{version.to_s}      
+      source #{zsh_function}/utils/styles.zsh
       for f in #{zsh_function}/*.zsh; do
         source ${f}
       done
