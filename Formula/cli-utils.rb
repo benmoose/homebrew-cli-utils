@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.13.tar.gz"
-  sha256 "504d81234e3637794f8c6289d4bab78935a91ab745a5c615498ce7473e4826d2"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.14.tar.gz"
+  sha256 "7577c01218eca04d6a58d29d076a6dea0653ade699eab51188ed02fac8583603"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -11,14 +11,17 @@ class CliUtils < Formula
   def install
     prefix.install_metafiles
 
-    zsh_function.install Dir["src/functions/*.zsh"]
-    zsh_function.install "src/global.zsh"
+    cd "src" do
+      pkgshare.install Dir["./functions/*.zsh"]
+      pkgshare.install "./global.zsh"
+    end
 
-    (share/".zsh").install <<~EOS
+    (share/".zshrc").write <<~EOS
       # #{name} v#{version.to_s}
-      for f in source #{zsh_function}/*.zsh; do
-        source ${f}
+      for _f in #{pkgshare}/*.zsh; do
+        source ${_f}
       done
+      unset _f
     EOS
   end
 
@@ -26,19 +29,19 @@ class CliUtils < Formula
     <<~EOS
       If the functions are not found automatically, add this to your ~/.zshrc
 
-      `source #{opt_share}/.zsh`
+      `source #{opt_share}/.zshrc`
 
       Then restart your terminal or run `source ~/.zshrc`.
     EOS
   end
 
   test do
-    type_out = shell_output("zsh -c 'source #{share}/.zsh && type #{func_names.join(" ")}'")
+    type_out = shell_output("zsh -c 'source #{share}/.zshrc && type #{func_names.join(" ")}'")
     func_names.each do |fn|
       assert_match("#{fn} is a shell function", type_out)
     end
 
-    uuid_out = shell_output("zsh -c 'source #{share}/.zsh && uuid'").rstrip
+    uuid_out = shell_output("zsh -c 'source #{share}/.zshrc && uuid'").rstrip
     assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
   end
 
