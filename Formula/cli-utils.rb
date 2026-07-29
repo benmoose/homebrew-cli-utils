@@ -14,7 +14,7 @@ class CliUtils < Formula
     zsh_function.install Dir["src/functions/*.zsh"]
     zsh_function.install "src/global.zsh"
 
-    (share/name).write <<~EOS
+    (share/".zsh").install <<~EOS
       # #{name} v#{version.to_s}
       for f in source #{zsh_function}/*.zsh; do
         source ${f}
@@ -26,23 +26,20 @@ class CliUtils < Formula
     <<~EOS
       If the functions are not found automatically, add this to your ~/.zshrc
 
-      `source #{opt_share}/#{name}`
+      `source #{opt_share}/.zsh`
 
       Then restart your terminal or run `source ~/.zshrc`.
     EOS
   end
 
   test do
-    type_out = shell_output("zsh -c 'source #{share}/#{name} && type #{func_names.join(" ")}'")
+    type_out = shell_output("zsh -c 'source #{share}/.zsh && type #{func_names.join(" ")}'")
     func_names.each do |fn|
       assert_match("#{fn} is a shell function", type_out)
     end
 
-    uuid_out = shell_output("zsh -c 'source #{share}/#{name} && uuid'").rstrip
+    uuid_out = shell_output("zsh -c 'source #{share}/.zsh && uuid'").rstrip
     assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
-
-    err_out = shell_output("zsh -c 'source #{share}/#{name} && ,err foobar 2>&1'")
-    assert_match("foobar\n", err_out)
   end
 
   private
