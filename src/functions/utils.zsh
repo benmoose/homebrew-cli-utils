@@ -10,16 +10,15 @@ function ,err {
 
 function ,spinner {
 	declare -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
-		# CIVIS="$(\tput civis)" CNORM="$(\tput cnorm)" CR="$(\tput cr)" EL="$(\tput el)" NS="$(\tput sgr0)"
 	declare -ar frames=("⠄" "⠆" "⠇" "⠋" "⠙" "⠸" "⠰" "⠠" "⠰" "⠸" "⠙" "⠋" "⠇" "⠆")
 	declare -i i
 
 	printf "${CIVIS}"  # hide cursor
-	\trap 'printf "${CNORM}"' EXIT ERR
+	trap 'printf "${CNORM}"' EXIT ERR
 
 	while \kill -0 "${pid_arg}" 2>/dev/null; do
-		printf "${CR}%s%s${NS}" "${style_arg}" "${frames[$((i % ${#frames[@]} + 1))]}" "${msg_arg}"
+		printf "${CR}${style_arg}%s${NS} %s" "${frames[$((i % ${#frames[@]} + 1))]}" "${msg_arg}"
 		((i++))
-		\sleep 0.045
+		sleep 0.045
 	done
 }

@@ -6,8 +6,6 @@ class CliUtils < Formula
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
-  depends_on macos: :catalina
-
   def install
     prefix.install_metafiles
 
