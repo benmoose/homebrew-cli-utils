@@ -1,0 +1,24 @@
+# shellcheck shell=bash
+_require _git_repo
+
+if ! _git_repo; then return 1; fi
+
+declare ref remote
+for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
+	if git show-ref --verify --quiet "${ref}" 2>/dev/null; then
+		echo "${ref:t}"
+
+		return 0
+	fi
+done
+
+for remote in origin upstream; do
+	ref=$(git rev-parse --abbrev-ref --quiet ${remote}/HEAD 2>/dev/null)
+	if [[ "${ref}" == ${remote}/* ]]; then
+		echo "${ref#${remote}/}"
+		return 0
+	fi
+done
+
+echo "master"
+return 1

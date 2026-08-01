@@ -8,44 +8,45 @@ class CliUtils < Formula
 
   def install
     prefix.install_metafiles
-
-    cd "src" do
-      pkgshare.install Dir["./functions/*.zsh"]
-      pkgshare.install "./global.zsh"
-    end
-
-    (share/".zshrc").write <<~EOS
-      # #{name} v#{version.to_s}
-      for _f in #{pkgshare}/*.zsh; do
-        source ${_f}
-      done
-      unset _f
-    EOS
+    
+    zsh_function.install Dir["./src/functions/private/_*"]
+    zsh_function.install Dir["./src/functions/public/*"]
   end
 
   def caveats
-    <<~EOS
-      If the functions are not found automatically, add this to your ~/.zshrc
-
-      `source #{opt_share}/.zshrc`
-
-      Then restart your terminal or run `source ~/.zshrc`.
-    EOS
+    ohai zshrc_message
+    # autoload -Uz _require #{function_dir}/*(:t)
   end
 
   test do
-    type_out = shell_output("zsh -c 'source #{share}/.zshrc && type #{func_names.join(" ")}'")
     func_names.each do |fn|
-      assert_match("#{fn} is a shell function", type_out)
+      assert_match("builtin autoload", shell_output("zsh -c '$+functions[#{fn}]'"))
     end
 
-    uuid_out = shell_output("zsh -c 'source #{share}/.zshrc && uuid'").rstrip
+    uuid_out = shell_output("zsh -c 'uuid'").rstrip
     assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
   end
 
   private
 
+  def function_dir
+    "#{HOMEBREW_PREFIX}/share/#{name}/zsh/site-functions"
+  end
+
   def func_names
-    [:com, :cos, :rbm, :vr, :vpr, :uuid]
+    [:com, :cos, :uuid]
+  end
+
+  def zshrc_message
+    <<~EOS
+      Add this to your ~/.zshrc
+
+      if [[ -z ${fpath[(r)#{function_dir}]} ]]; then
+        fpath=("#{function_dir}" $fpath)    
+        autoload -Uz _require com cos uuid
+      fi
+        
+      Then restart your terminal or run `source ~/.zshrc`
+    EOS
   end
 end

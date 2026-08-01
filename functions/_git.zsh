@@ -5,20 +5,19 @@ set -o pipefail
 function com {
 	if ! ,is_git_repo; then return 1; fi
 
-	git checkout --quiet "$(,git_main_branch)"
+	eval "git checkout --quiet $(,git_main_branch)"
 }
 
 function cos {
 	if ! ,is_git_repo; then return 1; fi
 
-	git checkout --quiet staging
+	eval 'git checkout --quiet staging'
 }
 
 function rbm {
 	if ! ,is_git_repo; then return 1; fi
 
-	declare -r main_b="$(,git_main_branch)" curr_b="$(,git_current_branch)"
-
+	local -r main_b="$(,git_main_branch)" curr_b="$(,git_current_branch)"
 	if [[ "${main_b}" == "${curr_b}" ]]; then
 		,err "$0: not on a feature branch"
 		return 1
@@ -28,14 +27,14 @@ function rbm {
 	(git fetch -q && git rebase -q "origin/${main_b}") & declare -r pid="${!}"
 	trap 'kill "${pid}"; return 130' INT TERM
 
-	declare -r msg="rebase onto origin/${main_b}..."
+	local -r msg="rebase onto origin/${main_b}..."
 	,spinner "${pid}" "${msg}..."
 
-	if ! \wait "${pid}" 2>/dev/null; then
-		printf "%s${RED}✕${NS} %s error.\n" "${CR}${EL}" "${msg}"
-		return 0
-	else
+	if \wait "${pid}" 2>/dev/null; then
 		printf "%s${GREEN}✔${NS} %s done.\n" "${CR}${EL}" "${msg}"
+	else
+		printf "%s${RED}✕${NS} %s error.\n" "${CR}${EL}" "${msg}"
+		return 1
 	fi
 }
 
@@ -43,9 +42,16 @@ function vr {
 	if ! ,is_git_repo; then return 1; fi
 	if ! which gh &>/dev/null; then ,err "$0: command gh not found"; return 127; fi
 
-	declare -r branch_arg="${1:-$(,git_current_branch)}"
+	setopt LOCAL_OPTIONS LOCAL_TRAPS NO_MONITOR
 
-	(gh repo view --branch ${branch_arg} --web) >/dev/null
+	local -r branch_arg="${1:-$(,git_current_branch)}"
+
+	(gh repo view --branch "${branch_arg}" --web) >/dev/null &
+	readonly pid="${!}"
+	trap 'kill "${pid}"; return 130' INT TERM
+
+	,spinner "${pid}" "Opening repository... "
+	if wait "${pid}" 2>/dev/null; then printf "${CR}${EL}"; fi
 }
 
 function vpr {
@@ -57,9 +63,11 @@ function vpr {
 	(gh pr view --web) >/dev/null & local pid="${!}"
 	trap 'kill "${pid}"; return 130' INT TERM
 
-	,spinner "${pid}" "Opening pull request... "
+	local -r msg="Opening pull request #$(gh pr view --json number --jq '.number')..."
+
+	,spinner "${pid}" "${msg} " $(tput setaf 4)
 	if wait "${pid}" 2>/dev/null; then
-		printf "%s%s✓%s Opened pull request.\n" "${CR}${EL}" "${GREEN}" "${NS}" 
+		printf "%s%s✓%s ${msg} done.\n" "${CR}${EL}" "${GREEN}" "${NS}" 
 	fi
 }
 
