@@ -1,0 +1,6 @@
+# shellcheck shell=bash
+_require _git_repo _git_main_branch
+
+if ! _git_repo; then return 1; fi
+
+eval "git checkout --quiet $(_git_main_branch)"
