@@ -1,13 +1,10 @@
 #!/usr/bin/env zsh
 
-local pkgshare_arg="${1}" fn_path
+declare -UT FPATH=$FPATH fpath
 
-declare -ar fn_paths=(${pkgshare_arg}/{private,public})
-typeset -U fpath
+declare -r fn_dir="$1"
 
-for fn_path in ${fn_paths}; do
-	if [[ -z ${fpath[(r)${fn_path}]} ]]; then
-		fpath=(${fn_path} $fpath)
-		autoload -Uz ${fn_path}/*(:t)
-	fi
-done
+if [[ -z ${FPATH[(r)${fn_dir}]} ]]; then
+	fpath=(${fn_path} $fpath)
+	autoload -Uz ${fn_path}/*(:t)
+fi

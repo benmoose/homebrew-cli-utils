@@ -9,11 +9,11 @@ class CliUtils < Formula
   def install
     prefix.install_metafiles
 
-    pkgshare.install Dir["functions/private/_*"]
-    pkgshare.install Dir["functions/public/*"]
+    libexec.install Dir["functions/private/_*"]
+    libexec.install Dir["functions/public/*"]
     libexec.install "functions/init.sh"
     
-    (bin/"init-cli-utils").write_env_script libexec/"init.sh", [pkgshare], fpath: ENV.fetch("FPATH", nil)
+    bin.write_exec_script (libexec/"init.sh"), [libexec]
   end
 
   def caveats
