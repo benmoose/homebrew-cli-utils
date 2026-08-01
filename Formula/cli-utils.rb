@@ -1,26 +1,30 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.17.tar.gz"
-  sha256 "648d96ec315af41b71b57399c8cdfd7fa8576b34cbc2acd25a19560881e86e32"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.18.tar.gz"
+  sha256 "d80b83b2e5e520c531094b4b8a49814c09c2f13db85af4dc2294d9dc4173910c"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
   def install
     prefix.install_metafiles
 
-    libexec.install Dir["functions/private/_*"]
-    libexec.install Dir["functions/public/*"]
-    libexec.install "functions/init.sh"
+    pkgshare.install Dir["functions/private/*"]
+    pkgshare.install Dir["functions/public/*"]
+    pkgshare.install Dir["functions/init.sh"]
     
-    bin.write_exec_script (libexec/"init.sh"), [libexec]
+    bin.write_exec_script Dir[pkgshare/"init.sh"], [pkgshare]
+  end
+
+  def post_install_steps
+    set_permissions "{{pkgshare}}/init.sh", "0755"
   end
 
   def caveats
     <<~EOS
       Add this to your .zshrc:
 
-        ./init-cli-utils.sh #{opt_pkgshare}
+        init.sh
     EOS
   end
 
