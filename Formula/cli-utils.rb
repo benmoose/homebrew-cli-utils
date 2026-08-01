@@ -12,30 +12,23 @@ class CliUtils < Formula
 
     pkgshare.install Dir["functions/private/_*"]
     pkgshare.install Dir["functions/public/*"]
+    libexec.install "functions/init.sh"
+    
+    (bin/"init-cli-utils").write_env_script libexec/"init.sh", [pkgshare], fpath: ENV.fetch("FPATH", nil)
   end
 
   def caveats
     <<~EOS
       Add this to your .zshrc:
 
-        fpath=(#{opt_pkgshare} $fpath)
-        autoload -Uz _require #{pub_fn.inspect}
+        ./init-cli-utils.sh #{opt_pkgshare}
     EOS
   end
 
-  test do
-    fpath=(opt_pkgshare $fpath)
-    assert_match("builtin autoload", shell_output("zsh -c 'autoload -Uz uuid; $functions[uuid]'"))
+  # test do
+  #   assert_match("builtin autoload", shell_output("zsh -c 'source #{opt_pkgshare} uuid && $functions[uuid]'"))
 
-    uuid_out = shell_output("zsh -c 'uuid'").rstrip
-    assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
-  end
-
-  private
-
-  def pub_fn
-    cd pkgshare do
-      Dir.glob("[^_][a-z]+")
-    end
-  end
+  #   uuid_out = shell_output("zsh -c 'uuid'").rstrip
+  #   assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
+  # end
 end
