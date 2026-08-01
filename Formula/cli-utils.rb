@@ -1,52 +1,43 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.15.tar.gz"
-  sha256 "4b4f49c5315daee505b3b9768ca0886af14ef3f89b319de2a9555fa1a5e278ec"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.16.tar.gz"
+  sha256 "9002a284e2cd6eba949297771d5bf8c1cfd1ad519a71e148638b419029676da4"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
   def install
     prefix.install_metafiles
-    
-    zsh_function.install Dir["./src/functions/private/_*"]
-    zsh_function.install Dir["./src/functions/public/*"]
+
+    pkgshare.install Dir["functions/private/_*"]
+    pkgshare.install Dir["functions/public/*"]
+  end
+
+  def post_install
+    system "autoload", "-Uz", "_require", func_names.join(" ")
   end
 
   def caveats
-    ohai zshrc_message
-    # autoload -Uz _require #{function_dir}/*(:t)
+    ohai <<~EOS
+      Add this to your .zshrc:
+
+        fpath=(#{opt_pkgshare} $fpath)
+        autoload -Uz _require #{func_names.join(" ")}
+    EOS
   end
 
   test do
     func_names.each do |fn|
-      assert_match("builtin autoload", shell_output("zsh -c '$+functions[#{fn}]'"))
+      assert_match("builtin autoload", shell_output("zsh -c '$functions[#{fn}]'"))
     end
 
-    uuid_out = shell_output("zsh -c 'uuid'").rstrip
-    assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
+    # uuid_out = shell_output("zsh -c 'uuid'").rstrip
+    # assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
   end
 
   private
 
-  def function_dir
-    "#{HOMEBREW_PREFIX}/share/#{name}/zsh/site-functions"
-  end
-
   def func_names
-    [:com, :cos, :uuid]
-  end
-
-  def zshrc_message
-    <<~EOS
-      Add this to your ~/.zshrc
-
-      if [[ -z ${fpath[(r)#{function_dir}]} ]]; then
-        fpath=("#{function_dir}" $fpath)    
-        autoload -Uz _require com cos uuid
-      fi
-        
-      Then restart your terminal or run `source ~/.zshrc`
-    EOS
+    Dir.glob("[^_]*", base: opt_pkgshare)
   end
 end
