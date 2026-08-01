@@ -2,7 +2,7 @@
 
 _require _err
 
-if ! git rev-parse --git-dir &> /dev/null; then
+if ! git rev-parse --git-dir --quiet; then
 	[[ "$1" != "-q" ]] && _err "$0: not in git repository"
 
 	return 1
