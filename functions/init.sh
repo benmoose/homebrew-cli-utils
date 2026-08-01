@@ -1,10 +1,11 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
-declare -UT FPATH=$FPATH fpath
+declare -U fpath
 
 declare -r fn_dir="$1"
 
-if [[ -z ${FPATH[(r)${fn_dir}]} ]]; then
-	fpath=(${fn_path} $fpath)
-	autoload -Uz ${fn_path}/*(:t)
+if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
+	fpath+=("${fn_path}")
+
+	echo "${fn_path}/*" | xargs -n 1 autoload -Uz
 fi

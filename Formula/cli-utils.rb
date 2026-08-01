@@ -16,10 +16,6 @@ class CliUtils < Formula
     bin.write_exec_script Dir[pkgshare/"init.sh"], [pkgshare]
   end
 
-  def post_install_steps
-    set_permissions "{{pkgshare}}/init.sh", "0755"
-  end
-
   def caveats
     <<~EOS
       Add this to your .zshrc:
