@@ -11,7 +11,7 @@ local num msg
 num=$(gh pr view --json number --jq '.number')
 msg="Opening pull request #${num}... "
 
-_spinner "${pid}" "${msg} " "$(tput setaf 4)"
+_spinner "${pid}" "${msg}" "$(tput setaf 4)"
 if wait "${pid}" 2>/dev/null; then
 	printf "%s%s✓%s %s done.\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
 fi

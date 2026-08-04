@@ -28,7 +28,7 @@ function rbm {
 	trap 'kill "${pid}"; return 130' INT TERM
 
 	local -r msg="rebase onto origin/${main_b}..."
-	,spinner "${pid}" "${msg}..."
+	,spinner "${pid}" "${msg}"
 
 	if \wait "${pid}" 2>/dev/null; then
 		printf "%s${GREEN}✔${NS} %s done.\n" "${CR}${EL}" "${msg}"
@@ -50,7 +50,7 @@ function vr {
 	readonly pid="${!}"
 	trap 'kill "${pid}"; return 130' INT TERM
 
-	,spinner "${pid}" "Opening repository... "
+	,spinner "${pid}" "Opening repository..."
 	if wait "${pid}" 2>/dev/null; then printf "${CR}${EL}"; fi
 }
 
@@ -65,7 +65,7 @@ function vpr {
 
 	local -r msg="Opening pull request #$(gh pr view --json number --jq '.number')..."
 
-	,spinner "${pid}" "${msg} " $(tput setaf 4)
+	,spinner "${pid}" "${msg}" $(tput setaf 4)
 	if wait "${pid}" 2>/dev/null; then
 		printf "%s%s✓%s ${msg} done.\n" "${CR}${EL}" "${GREEN}" "${NS}" 
 	fi

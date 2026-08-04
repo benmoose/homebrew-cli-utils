@@ -1,5 +1,4 @@
 # shellcheck shell=bash
-_require _git_repo
 
 if ! _git_repo; then return 1; fi
 
