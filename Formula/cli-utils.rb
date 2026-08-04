@@ -9,18 +9,16 @@ class CliUtils < Formula
   def install
     prefix.install_metafiles
 
-    pkgshare.install Dir["functions/private/*"]
-    pkgshare.install Dir["functions/public/*"]
-    pkgshare.install Dir["functions/init.sh"]
-    
-    bin.write_exec_script Dir[pkgshare/"init.sh"], [pkgshare]
+    (pkgshare/"functions").install Dir["functions/private/*"]
+    (pkgshare/"functions").install Dir["functions/public/*"]
+    pkgshare.install "functions/init.sh"
   end
 
   def caveats
     <<~EOS
       Add this to your .zshrc:
 
-        init.sh
+        source "#{opt_pkgshare}/init.sh"
     EOS
   end
 

@@ -1,11 +1,13 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
+# Must be sourced (not executed) from an interactive zsh, e.g. in .zshrc:
+#   source "/path/to/init.sh"
 
-declare -U fpath
-
-declare -r fn_dir="$1"
+local -r fn_dir="${0:A:h}/functions"
 
 if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
-	fpath+=("${fn_path}")
+	fpath+=("${fn_dir}")
 
-	echo "${fn_path}/*" | xargs -n 1 autoload -Uz
+	for fn_file in "${fn_dir}"/*; do
+		autoload -Uz -- "${fn_file:t}"
+	done
 fi
