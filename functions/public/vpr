@@ -1,17 +1,20 @@
-# shellcheck shell=bash
+emulate -L zsh
+setopt no_monitor
+
 if ! _is_git_repo; then return 1; fi
 if ! which gh &>/dev/null; then _err "$0: command gh not found"; return 127; fi
 
-setopt LOCAL_OPTIONS LOCAL_TRAPS NO_MONITOR
+declare -r _num=$(mktemp --quiet --suffix="${0}")
 
-(gh pr view --web) >/dev/null & local pid="${!}"
-trap 'kill "${pid}"; return 130' INT TERM
+gh pr view --json number --jq '.number' | cat >"${_num}" &!
+gh pr view --web >/dev/null & declare -r pid="${!}"
 
-local num msg
-num=$(gh pr view --json number --jq '.number')
-msg="Opening pull request #${num}... "
+trap 'kill "${pid}"; rm -f "${_num}"; return 130' INT TERM
 
-_spinner "${pid}" "${msg}" "$(tput setaf 4)"
+_spinner "${pid}" "Opening pull request..."
 if wait "${pid}" 2>/dev/null; then
-	printf "%s%s✓%s %s done.\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
+	local num=$(<"${_num}")
+	printf "%s%s✓%s Opened %s.\n" "${CR}${EL}" "${GREEN}" "${NS}" "${num:+#}${num:-pull request}"
 fi
+
+rm -f "${_num}"

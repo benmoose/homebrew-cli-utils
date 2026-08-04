@@ -12,6 +12,6 @@ if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
 	fpath+=("${fn_dir}")
 
 	for fn_file in "${fn_dir}"/*; do
-		autoload -Uz -- "${fn_file:t}"
+		emulate zsh -c "autoload -Uz -- ${fn_file:t}"
 	done
 fi
