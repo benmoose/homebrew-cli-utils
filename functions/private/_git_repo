@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-if ! git rev-parse --git-dir --quiet; then
+if ! git rev-parse --git-dir --quiet &>/dev/null; then
 	[[ "$1" != "-q" ]] && _err "$0: not in git repository"
 
 	return 1
