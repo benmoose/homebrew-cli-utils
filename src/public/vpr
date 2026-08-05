@@ -4,11 +4,11 @@ set -o pipefail
 if ! _git_repo; then return 1; fi
 if ! which gh &>/dev/null; then _err "$0: command gh not found"; return 127; fi
 
-declare -r _num=$(mktemp --quiet --suffix="${0}")
+declare -r _num=$(mktemp -q -t="${0}")
 
 setopt no_monitor
 
-gh pr view --json number --jq '.number' | cat >"${_num}" &!
+gh pr view --json number --jq '.number' 2>/dev/null | cat >"${_num}" &!
 gh pr view --web >/dev/null & declare -r pid="${!}"
 
 trap 'kill "${pid}"; rm -f "${_num}"; return 130' INT TERM

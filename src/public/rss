@@ -8,7 +8,7 @@ if [[ "${curr_b}" != "staging" ]]; then _err "$0: not on staging branch"; return
 
 setopt no_monitor
 
-git fetch -q && git reset -q --hard origin/staging & local -r pid="${!}"
+{ git fetch -q && git reset -q --hard origin/staging; } & local -r pid="${!}"
 trap 'kill "${pid}"; return 130'
 
 _spinner "${pid}" "${msg}"

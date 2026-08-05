@@ -8,7 +8,7 @@ if [[ "${curr_b}" != "${main_b}" ]]; then _err "$0: not on ${main_b} branch"; re
 
 setopt no_monitor
 
-git fetch -q && git reset -q --hard "origin/${main_b}" & local -r pid="${!}"
+{ git fetch -q && git reset -q --hard "origin/${main_b}"; } & local -r pid="${!}"
 trap 'kill "${pid}"; return 130'
 
 local -r msg="reset to origin/${main_b}..."
