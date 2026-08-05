@@ -1,4 +1,3 @@
-# shellcheck shell=bash
 emulate -L zsh
 set -o pipefail
 

@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+emulate -L zsh
 
 declare -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
 declare -ar frames=("⠄" "⠆" "⠇" "⠋" "⠙" "⠸" "⠰" "⠠" "⠰" "⠸" "⠙" "⠋" "⠇" "⠆")

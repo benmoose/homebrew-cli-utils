@@ -1,8 +1,0 @@
-# shellcheck shell=bash
-# _require fn1 fn2 ... — autoload any of the given functions not already defined
-
-local fn
-
-for fn in "$@"; do
-	(( $+functions[${fn}] )) || autoload -Uz "${fn}"
-done
