@@ -4,7 +4,7 @@ if ! _git_repo; then return 1; fi
 
 local -r main_b="$(_git_main_branch)" curr_b="$(_git_current_branch)"
 
-if [[ "${curr_b}" != "staging" ]]; then _err "$0: not on staging branch"; return 1; fi
+if [[ "${curr_b}" != "${main_b}" ]]; then _err "$0: not on ${main_b} branch"; return 1; fi
 
 setopt no_monitor
 

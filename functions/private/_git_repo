@@ -1,6 +1,6 @@
 emulate -L zsh
 
-if ! git rev-parse --git-dir --quiet 2>/dev/null; then
+if ! git rev-parse --git-dir --quiet &>/dev/null; then
 	if [[ "$1" != "-q" ]]; then _err "$0: not in git repository"; fi
 
 	return 1
