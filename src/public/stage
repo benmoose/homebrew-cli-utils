@@ -2,6 +2,9 @@ emulate -L zsh
 set -o pipefail
 
 if ! _git_repo; then return 1; fi
+if ! git show-ref --exists --no-tags --no-head --quiet refs/remotes/origin/staging; then
+	_err "$0: origin/staging does not exist"
+fi
 
 local -r main_b="$(_git_main_branch)" curr_b="$(_git_current_branch)"
 
