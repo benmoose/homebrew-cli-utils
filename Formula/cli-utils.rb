@@ -9,9 +9,9 @@ class CliUtils < Formula
   def install
     prefix.install_metafiles
 
-    (pkgshare/"functions").install Dir["functions/private/*"]
-    (pkgshare/"functions").install Dir["functions/public/*"]
-    pkgshare.install "functions/init.sh"
+    (pkgshare/"functions").install Dir["src/private/*"]
+    (pkgshare/"functions").install Dir["src/public/*"]
+    pkgshare.install "src/init.sh"
   end
 
   def caveats
