@@ -14,8 +14,8 @@ trap 'kill "${pid}"; return 130'
 _spinner "${pid}" "${msg}"
 
 if wait "${pid}" 2>/dev/null; then
-	printf "%s%s✓%s %s done.\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
+	printf "%s%s✓%s %s done\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
 else
-	printf "%s%s×%s %s error.\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"
+	printf "%s%s×%s %s error\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"
 	return 1
 fi
