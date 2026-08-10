@@ -1,4 +1,4 @@
-# gvel print the number of commits ("velocity") per month.
+# gvel - List the number of commits ("velocity") per month
 # See https://piechowski.io/post/git-commands-before-reading-code
 
 emulate -L zsh

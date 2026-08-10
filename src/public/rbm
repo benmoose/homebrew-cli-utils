@@ -1,3 +1,5 @@
+# rbm - Rebase against the remote main branch
+
 emulate -L zsh
 
 if ! _git_repo; then return 1; fi

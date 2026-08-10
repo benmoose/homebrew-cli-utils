@@ -1,3 +1,5 @@
+# _err [<msg>] - Print <msg> to stderr
+
 emulate -L zsh
 
 printf >&2 "%s%s%s\n" "${RED}" "${*}" "${NS}"

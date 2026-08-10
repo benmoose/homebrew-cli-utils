@@ -1,3 +1,5 @@
+# vpr - View associated pull request on github.com
+
 emulate -L zsh
 set -o pipefail
 

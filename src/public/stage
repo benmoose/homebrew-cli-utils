@@ -1,3 +1,5 @@
+# stage - Stage the local feature branch
+
 emulate -L zsh
 set -o pipefail
 

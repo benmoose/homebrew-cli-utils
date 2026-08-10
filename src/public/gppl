@@ -1,4 +1,4 @@
-# gppl list the repo's top contributors over the last year.
+# gppl - List the repo's top contributors over the last year
 # See https://piechowski.io/post/git-commands-before-reading-code
 
 emulate -L zsh
