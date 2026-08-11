@@ -11,14 +11,15 @@ local -r msg="Opening pull request..." \
 	_err=$(mktemp -q -t="${0}")
 
 gh pr view --web 2> "${_err}" > /dev/null & local -r pid="${!}"
-
 trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
+trap 'rm -f "${_err}"' EXIT
+
 _spinner "${pid}" "${msg}"
 
-trap 'rm -f "${_err}"' EXIT
 if wait "${pid}" 2>/dev/null; then
-	printf "${CR}${EL}${DIM}${BOLD}${GREEN}✓${NS} ${DIM}%s done${NS}\n" "${msg}"
+	printf "${CR}${EL}${BOLD}${DIM}${GREEN}✓${NS} ${DIM}%s done${NS}\n" "${msg}"
 else
-	printf "${CR}${EL}${RED}${BOLD}×${NS} %s\n" "${$(<${_err}):0:1:u}${$(<${_err}):1}"
+	local -r _errmsg=$(<${_err})
+	printf "${CR}${EL}${BOLD}${RED}×${NS} %s\n" "${_errmsg:0:1:u}${_errmsg:1}"
 	return 1
 fi
