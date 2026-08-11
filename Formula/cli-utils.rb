@@ -18,7 +18,7 @@ class CliUtils < Formula
     <<~EOS
       Add this to your .zshrc:
 
-        source "#{opt_pkgshare}/init.sh"
+        source "$(brew --prefix)#{opt_pkgshare.delete_prefix(HOMEBREW_PREFIX)}/init.sh"
     EOS
   end
 
