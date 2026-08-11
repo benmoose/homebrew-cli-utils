@@ -1,3 +1,7 @@
+# uuid [-qx] - Print a v4 UUID
+#	-q	Supress output to stdout.
+#	-x	Do not copy UUID to the clipboard.
+
 emulate -L zsh
 set -o pipefail
 

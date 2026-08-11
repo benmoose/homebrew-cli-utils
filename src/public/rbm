@@ -1,3 +1,5 @@
+# rbm - Rebase against the remote main branch
+
 emulate -L zsh
 
 if ! _git_repo; then return 1; fi
@@ -8,15 +10,18 @@ if [[ "${main_b}" == "${curr_b}" ]]; then _err "$0: not on a feature branch"; re
 
 setopt no_monitor
 
-{ git fetch -q && git rebase -q "origin/${main_b}" >/dev/null; } & local -r pid="${!}"
+() {
+	git fetch -q && \
+		git rebase -q "origin/${main_b}" >/dev/null
+} & local -r pid="${!}"
 trap 'kill "${pid}"; return 130' INT TERM
 
 local -r msg="rebase onto origin/${main_b}..."
 _spinner "${pid}" "${msg}"
 
 if wait "${pid}" 2>/dev/null; then
-	printf "%s%s✓%s %s done.\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
+	printf "%s%s✓%s %s done\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
 else
-	printf "%s%s×%s %s error.\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"
+	printf "%s%s×%s %s error\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"
 	return 1
 fi

@@ -1,3 +1,5 @@
+# rsm - Reset the local main branch to the remote branch
+
 emulate -L zsh
 
 if ! _git_repo; then return 1; fi
@@ -15,8 +17,8 @@ local -r msg="reset to origin/${main_b}..."
 _spinner "${pid}" "${msg}"
 
 if wait "${pid}" 2>/dev/null; then
-	printf "%s%s✓%s %s done.\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
+	printf "%s%s✓%s %s done\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
 else
-	printf "%s%s×%s %s error.\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"
+	printf "%s%s×%s %s error\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"
 	return 1
 fi
