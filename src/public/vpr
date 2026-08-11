@@ -1,24 +1,24 @@
-# vpr - View associated pull request on github.com
+# vpr - View the pull request belonging to the current branch on GitHub
 
 emulate -L zsh
-set -o pipefail
 
 if ! _git_repo; then return 1; fi
 if ! which gh &>/dev/null; then _err "$0: command gh not found"; return 127; fi
 
-declare -r _num=$(mktemp -q -t="${0}")
-
 setopt no_monitor
 
-gh pr view --json number --jq '.number' 2>/dev/null | cat >"${_num}" &!
-gh pr view --web >/dev/null & declare -r pid="${!}"
+local -r msg="Opening pull request..." \
+	_err=$(mktemp -q -t="${0}")
 
-trap 'kill "${pid}"; rm -f "${_num}"; return 130' INT TERM
+gh pr view --web 2> "${_err}" > /dev/null & local -r pid="${!}"
 
-_spinner "${pid}" "Opening pull request..."
+trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
+_spinner "${pid}" "${msg}"
+
+trap 'rm -f "${_err}"' EXIT
 if wait "${pid}" 2>/dev/null; then
-	local num=$(<"${_num}")
-	printf "%s%s✓%s Opened %s.\n" "${CR}${EL}" "${GREEN}" "${NS}" "${num:+#}${num:-pull request}"
+	printf "${CR}${EL}${DIM}${BOLD}${GREEN}✓${NS} ${DIM}%s done${NS}\n" "${msg}"
+else
+	printf "${CR}${EL}${RED}${BOLD}×${NS} %s\n" "${$(<${_err}):0:1:u}${$(<${_err}):1}"
+	return 1
 fi
-
-rm -f "${_num}"
