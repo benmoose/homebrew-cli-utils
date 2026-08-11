@@ -4,9 +4,10 @@ emulate -L zsh
 if ! _git_repo; then return 1; fi
 if ! which gh &>/dev/null; then _err "$0: command gh not found"; return 127; fi
 
+setopt nomonitor
+
 local -r branch_arg="${1:-$(_git_current_branch)}"
 
-setopt nomonitor
 gh repo view --branch "${branch_arg}" --web >/dev/null & local -r pid="${!}"
 trap 'kill "${pid}"; return 130' INT TERM
 

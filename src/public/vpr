@@ -16,10 +16,11 @@ trap 'rm -f "${_err}"' EXIT
 
 _spinner "${pid}" "${msg}"
 
-if wait "${pid}" 2>/dev/null; then
-	printf "${CR}${EL}${BOLD}${DIM}${GREEN}✓${NS} ${DIM}%s done${NS}\n" "${msg}"
-else
+if ! wait "${pid}" 2>/dev/null; then
+	printf "${CR}${EL}"
 	local -r _errmsg=$(<${_err})
-	printf "${CR}${EL}${BOLD}${RED}×${NS} %s\n" "${_errmsg:0:1:u}${_errmsg:1}"
+	_err "${0}: ${_errmsg:0:1:u}${_errmsg:1}"
 	return 1
 fi
+
+printf "${CR}${EL}%s ${DIM}%s done${NS}\n" "${BOLD}${DIM}${GREEN}✓${NS}" "${msg}"
