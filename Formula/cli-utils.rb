@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.31.tar.gz"
-  sha256 "f4396af4d2ea92d181fc0a20e830cce4c73a931f06529c7db0436f9e884f3cc1"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.32.tar.gz"
+  sha256 "1cd4230de007dce2b16a2f17124d8e56bd853d175d7d9996e7aa54de2adbe70e"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -18,7 +18,7 @@ class CliUtils < Formula
     <<~EOS
       Add this to your .zshrc:
 
-        source "$(brew --prefix)#{opt_pkgshare.delete_prefix(HOMEBREW_PREFIX)}/init.sh"
+        source "$(brew --prefix)#{opt_pkgshare.to_s.delete_prefix(HOMEBREW_PREFIX)}/init.sh"
     EOS
   end
 
