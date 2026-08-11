@@ -7,7 +7,7 @@ if ! which gh &>/dev/null; then _err "$0: command gh not found"; return 127; fi
 
 setopt no_monitor
 
-local -r msg="Opening pull request..." \
+local -r msg="Open pull request..." \
 	_err=$(mktemp -q -t="${0}")
 
 gh pr view --web 2> "${_err}" > /dev/null & local -r pid="${!}"
@@ -23,4 +23,4 @@ if ! wait "${pid}" 2>/dev/null; then
 	return 1
 fi
 
-printf "${CR}${EL}%s ${DIM}%s done${NS}\n" "${BOLD}${DIM}${GREEN}✓${NS}" "${msg}"
+printf "${CR}${EL}%s %s done\n" "${BOLD}${GREEN}✓${NS}" "${msg}"
