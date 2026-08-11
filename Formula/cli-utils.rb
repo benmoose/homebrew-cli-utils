@@ -16,9 +16,10 @@ class CliUtils < Formula
 
   def caveats
     <<~EOS
-      Add this to your .zshrc:
+      cli-utils installed! To make Add this to your .zshrc:
 
-        source "$(brew --prefix)#{opt_pkgshare.to_s.delete_prefix(HOMEBREW_PREFIX)}/init.sh"
+        source "$(brew --prefix #{name})#{opt_pkgshare.to_s.delete_prefix(opt_prefix)}/init.sh"
+    
     EOS
   end
 
