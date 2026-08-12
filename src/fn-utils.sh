@@ -4,11 +4,18 @@
 
 emulate -L zsh
 
-local -r fn_dir="$(brew --prefix)/share/zsh/site-functions"
+local fn fn_arg="$1" \
+	fn_dir="$(brew --prefix)/share/zsh/site-functions"
+
+echo "!! fn_arg ${fn_arg} !!"
 
 if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
-	fpath+=("${fn_dir}")
+	fpath=($fpath "${fn_dir}")
 fi
+
+for fn in "${fn_arg}"/*; do
+	emulate zsh -c "autoload -Uz ${fn}"
+done
 
 local -r tputenv=$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)
 if [[ "${tputenv}" == "10" ]]; then
@@ -16,12 +23,3 @@ if [[ "${tputenv}" == "10" ]]; then
 		MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) BOLD=$(tput bold) DIM=$(tput dim) \
 		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
 fi
-
-local fn
-for fn in "${@}"; do
-	if [[ -e "${fn_dir}/${fn}" ]]; then
-		emulate zsh -c "autoload -Uz ${fn}"
-	else
-		printf >&2 "fn-utils: missing function %s" "${fn}"
-	fi
-done
