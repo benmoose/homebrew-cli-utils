@@ -12,7 +12,7 @@ if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
 fi
 
 for fn in "${fn_arg}"/*; do
-	emulate zsh -c "autoload -Uz ${fn}"
+	emulate zsh -c "autoload -Uz ${fn:t}"
 done
 
 local -r tputenv=$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)
