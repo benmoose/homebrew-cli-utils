@@ -23,6 +23,5 @@ for fn in "${@}"; do
 		emulate zsh -c "autoload -Uz ${fn}"
 	else
 		printf >&2 "fn-utils: missing function %s" "${fn}"
-		false
 	fi
 done

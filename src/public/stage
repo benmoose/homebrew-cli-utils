@@ -28,6 +28,7 @@ local -r _err=$(mktemp -q -t "${0}") \
 		git checkout -q "${curr_b}"
 } 2>"${_err}" & local -r pid="${!}"
 trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
+trap 'rm -f "${_err}"' EXIT
 
 _spinner "${pid}" "${msg}"
 
@@ -36,7 +37,7 @@ if ! wait "${pid}" 2>/dev/null; then
 	if [[ -e "${_err}" && -s "${_err}" ]]; then
 		while read -r line; do
 			printf "  ${DIM}%s${NS}\n" "${line}"
-		done < <"${_err}"
+		done <("${_err}")
 	fi
 	return 1
 fi
