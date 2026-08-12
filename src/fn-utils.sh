@@ -7,8 +7,6 @@ emulate -L zsh
 local fn fn_arg="$1" \
 	fn_dir="$(brew --prefix)/share/zsh/site-functions"
 
-echo "!! fn_arg ${fn_arg} !!"
-
 if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
 	fpath=($fpath "${fn_dir}")
 fi
