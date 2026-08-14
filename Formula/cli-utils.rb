@@ -12,8 +12,8 @@ class CliUtils < Formula
     pkgshare.install Dir["src/private/*"]
     pkgshare.install Dir["src/public/*"]
 
-    # bin.install "src/init.sh" => "init-cli-utils"
-    (bin/"init-cli-utils").write_env_script "src/init.sh", CLI_UTILS_FN_DIR: opt_pkgshare
+    inreplace "src/init.sh", "<<FN_DIR>>", opt_pkgshare
+    bin.install "src/init.sh" => "init-#{name}"
   end
 
   def caveats
