@@ -4,8 +4,8 @@
 
 emulate -L zsh
 
-if [[ -n "${1}" && "${1:l}" == "-l" ]]; then
-	echo "<<FN_DIR>>"; true
+if [[ -n "${1}" && "${1:l}" == "-f" ]]; then
+	printf "%s/bin/%s\n" "$(brew --prefix cli-utils)" "${0:t}"; true
 fi
 
 export -TU FPATH fpath

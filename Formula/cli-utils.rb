@@ -16,15 +16,11 @@ class CliUtils < Formula
     bin.install "src/init.sh" => "init-#{name}"
   end
 
-  def post_install
-    system "source", "init-#{name}", "-l"
-  end
-
   def caveats
     <<~EOS
       cli-utils installed! To make Add this to your .zshrc:
 
-        source init-cli-utils
+        source $(init-cli-utils -l)
     
     EOS
   end
