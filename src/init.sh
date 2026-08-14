@@ -13,7 +13,7 @@ local \
 if [[ -z ${fpath[(r)${_fn_dir}]} ]]; then
 	if [[ -d "${_fn_dir}" ]]; then
 		fpath+=("${_fn_dir}")
-	elif [[ -d "${_fn_fallback:A}" ]]
+	elif [[ -d "${_fn_fallback:A}" ]]; then
 		printf >&2 "%s: \`CLI_UTILS_FN_DIR\` env not set, using fallback directory \`%s\`\n" "${0:t}" "${_fn_fallback:A}"
 		_fn_dir="${_fn_fallback:A}"
 		fpath+=("${_fn_dir}")
