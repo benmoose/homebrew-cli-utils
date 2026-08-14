@@ -1,7 +1,7 @@
 # gppl - List the repo's top contributors over the last year
 # See https://piechowski.io/post/git-commands-before-reading-code
 
-emulate -L zsh
+builtin emulate -L zsh
 set -o pipefail
 
 if ! _git_repo; then return 1; fi

@@ -1,4 +1,4 @@
-emulate -L zsh
+builtin emulate -L zsh
 
 if ! git rev-parse --git-dir --quiet &>/dev/null; then
 	if [[ "$1" != "-q" ]]; then _err "${funcstack[-1]}: not in git repository"; fi

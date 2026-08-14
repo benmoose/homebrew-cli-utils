@@ -12,15 +12,15 @@ class CliUtils < Formula
     pkgshare.install Dir["src/private/*"]
     pkgshare.install Dir["src/public/*"]
 
-    inreplace "src/init.sh", "<<FN_DIR>>", opt_pkgshare
-    bin.install "src/init.sh" => "init-#{name}"
+    inreplace "src/init.sh", ".(fn-dir)", opt_pkgshare
+    bin.install "src/init.sh" => name
   end
 
   def caveats
     <<~EOS
       cli-utils installed! To make Add this to your .zshrc:
 
-        source $(init-cli-utils -l)
+        source $(cli-utils --init)
     
     EOS
   end

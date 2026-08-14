@@ -2,7 +2,7 @@
 #	-q	Supress output to stdout.
 #	-x	Do not copy UUID to the clipboard.
 
-emulate -L zsh
+builtin emulate -L zsh
 set -o pipefail
 
 if ! which uuidgen &>/dev/null; then

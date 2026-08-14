@@ -2,7 +2,7 @@
 # Must be sourced (not executed) from an interactive zsh, e.g. in .zshrc:
 #   source "/path/to/init.sh"
 
-emulate -L zsh
+builtin emulate -L zsh
 
 local fn fn_arg="$1"
 

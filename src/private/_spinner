@@ -1,5 +1,5 @@
 # _spinner <pid> [<msg>] - Show a spinner until the job with <pid> is finished
-emulate -L zsh
+builtin emulate -L zsh
 
 local -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
 
