@@ -4,21 +4,34 @@
 
 emulate -L zsh
 
-local -r fn_dir="${0:A:h}/functions"
+export -TU FPATH fpath
 
-if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
+local \
+	_fn_dir="${CLI_UTILS_FN_DIR:A}" \
+	_fn_fallback="${0:A:h}/../share/cli-utils/functions"
+
+if [[ -z ${fpath[(r)${_fn_dir}]} ]]; then
+	if [[ -d "${_fn_dir}" ]]; then
+		fpath+=("${_fn_dir}")
+	elif [[ -d "${_fn_fallback:A}" ]]
+		printf >&2 "%s: \`CLI_UTILS_FN_DIR\` env not set, using fallback directory \`%s\`\n" "${0:t}" "${_fn_fallback:A}"
+		_fn_dir="${_fn_fallback:A}"
+		fpath+=("${_fn_dir}")
+	else
+		printf >&2 "%s: unable to find cli-util functions, bad install? Try \`brew reinstall cli-utils\`\n" "${0:t}"
+		false
+	fi
+fi
+
+for fn_file in "${fn_dir}"/*; do
+	emulate zsh -c "autoload -Uz -- ${fn_file:t}"
+done
+
+unset _fn_dir _fn_fallback
+
+if [[ "$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)" == "10" ]]; then
 	declare -rx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
 		MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) \
 		BOLD=$(tput bold) DIM=$(tput dim) \
 		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
-
-	if [[ -d "${fn_dir}" ]]; then
-		fpath+=("${fn_dir}")
-
-		for fn_file in "${fn_dir}"/*; do
-			emulate zsh -c "autoload -Uz -- ${fn_file:t}"
-		done
-	else
-		printf >&2 "%s%s: expected to find directory at %s, try reinstalling benmoose/cli-utils%s\n" "${RED}" "${0}" "${fn_dir}" "${NS}"
-	fi
 fi

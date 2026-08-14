@@ -11,13 +11,16 @@ class CliUtils < Formula
 
     (pkgshare/"functions").install Dir["src/private/*"]
     (pkgshare/"functions").install Dir["src/public/*"]
-    pkgshare.install "src/init.sh"
+
+    bin.install "src/init.sh" => "init-cli-utils"
+    (bin/"init-cli-utils").write_env_script "src/init.sh" CLI_UTILS_FN_DIR: opt_pkgshare/"functions"
   end
 
   def caveats
     <<~EOS
       cli-utils installed! To make Add this to your .zshrc:
 
+        source init-cli-utils
         source "$(brew --prefix #{name})#{opt_pkgshare.to_s.delete_prefix(opt_prefix)}/init.sh"
     
     EOS
