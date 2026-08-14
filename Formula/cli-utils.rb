@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.53.tar.gz"
-  sha256 "d0439108f35d09e7420fa3f593cd688750658cdbc8149ee4c7e001dde6b24571"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.54.tar.gz"
+  sha256 "0871ca6542f8bc4a6c37502923542d984f034fd22fa36bb9aac37b49ac72f2b2"
   license "GPL-3.0"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
