@@ -5,7 +5,7 @@
 emulate -L zsh
 
 if [[ -n "${1}" && "${1:l}" == "-l" ]]; then
-	echo "${0:A}"; true
+	echo "<<FN_DIR>>"; true
 fi
 
 export -TU FPATH fpath

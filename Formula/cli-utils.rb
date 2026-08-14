@@ -25,7 +25,6 @@ class CliUtils < Formula
       cli-utils installed! To make Add this to your .zshrc:
 
         source init-cli-utils
-        source "$(brew --prefix #{name})#{opt_pkgshare.to_s.delete_prefix(opt_prefix)}/init.sh"
     
     EOS
   end
