@@ -4,9 +4,13 @@
 
 emulate -L zsh
 
+if [[ -n "${1}" && "${1:l}" == "-l" ]]; then
+	echo "${0:A}"; true
+fi
+
 export -TU FPATH fpath
 
-local \
+local _fn_file \
 	_fn_dir="<<FN_DIR>>" \
 	_fn_fallback="${0:A:h}/../share/cli-utils/functions"
 
@@ -23,11 +27,11 @@ if [[ -z ${fpath[(r)${_fn_dir}]} ]]; then
 	fi
 fi
 
-for fn_file in "${fn_dir}"/*; do
-	emulate zsh -c "autoload -Uz -- ${fn_file:t}"
+for _fn_file in "${_fn_dir}"/*; do
+	emulate zsh -c "autoload -Uz -- ${_fn_file:t}"
 done
 
-unset _fn_dir _fn_fallback
+unset _fn_file _fn_dir _fn_fallback
 
 if [[ "$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)" == "10" ]]; then
 	declare -rx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
