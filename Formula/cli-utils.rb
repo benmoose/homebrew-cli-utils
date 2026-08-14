@@ -1,19 +1,19 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.46.tar.gz"
-  sha256 "7d5abf2dae486766d220a237c4a1fabc8e0cad5eaa1b5e920710a1cd00ab0a3e"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.47.tar.gz"
+  sha256 "0199a291a35a52d65571cf24bf865a1ddce46dff7767d8d2d3ac67c013b639c7"
   license "GPL-3.0"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
   def install
     prefix.install_metafiles
 
-    (pkgshare/"functions").install Dir["src/private/*"]
-    (pkgshare/"functions").install Dir["src/public/*"]
+    pkgshare.install Dir["src/private/*"]
+    pkgshare.install Dir["src/public/*"]
 
-    bin.install "src/init.sh" => "init-cli-utils"
-    (bin/"init-cli-utils").write_env_script "src/init.sh" CLI_UTILS_FN_DIR: opt_pkgshare/"functions"
+    # bin.install "src/init.sh" => "init-cli-utils"
+    (bin/"init-cli-utils").write_env_script "src/init.sh", CLI_UTILS_FN_DIR: opt_pkgshare
   end
 
   def caveats
