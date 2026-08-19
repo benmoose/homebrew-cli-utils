@@ -18,7 +18,7 @@ update_line() {
 
 	echo "Checking ${file:t}..."
 	if [[ -f "${file}" ]]; then
-		if [[ -n "${pat}"]]; then
+		if [[ -n "${pat}" ]]; then
 			lines=$(\grep -nF "${pat}" "${file}")
 		else
 			lines=$(\grep -nF "${line#"${line%%[![:space:]]*}"}")
