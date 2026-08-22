@@ -145,7 +145,7 @@ _cli_utils_main() {
 	fi
 
 	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
-	_cli_utils_main "${0:a:t}" "${1-}" "/opt/homebrew/opt/cli-utils/share/cli-utils/"
+	_cli_utils_main "${0:a:t}" "${1-}" "__OPT_PKGSHARE__"
 } always {
 	unset -f _cli_utils_main _init _install _update_line _source_src _dotfile
 
