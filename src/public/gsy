@@ -1,4 +1,4 @@
-# gsy - (git-sync) are the HEAD and origin refs equal
+# gsy - (git-sync) Compare to branch at remote.
 
 builtin emulate -L zsh
 set -o pipefail

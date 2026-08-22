@@ -12,7 +12,11 @@ class CliUtils < Formula
     pkgshare.install Dir["src/private/*"]
     pkgshare.install Dir["src/public/*"]
 
-    inreplace "src/init.sh", "<<FN_DIR>>", opt_pkgshare
+    inreplace "src/init.sh" do |s|
+      s.gsub!("__OPT_PKGSHARE__", opt_pkgshare)
+      s.gsub!("__NAME__", name)
+    end
+
     bin.install "src/init.sh" => name
   end
 

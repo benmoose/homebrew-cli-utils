@@ -4,6 +4,14 @@
 
 set -u
 
+echo "source: ${_:-}"
+
+return 0
+
+_is_zsh() {
+	[ -n "${ZSH_VERSION-}" ]
+}
+
 _init_func () {
 	export -U FPATH fpath
 
@@ -65,7 +73,7 @@ _update_line() {
 _initsrc() {
 	cat << EOF
 # benmoose/cli-utils
-brew --prefix --installed cli-utils &>/dev/null && source "${name}" --zsh
+brew list --formulae cli-utils &>/dev/null && source $(__NAME__ --zsh)
 EOF
 }
 
@@ -78,7 +86,7 @@ _install () {
 		return 1
 	fi
 
-	_update_line $(_initsrc) "${dest}" "\"${name}\" --zsh"
+	_update_line "$(_initsrc)" "${dest}" "${name} --zsh"
 }
 
 _cli_utils_main() {
@@ -102,8 +110,8 @@ _cli_utils_main() {
 
 {
 	[[ $# == 1 ]] && \
-		_cli_utils_main "${0:t}" "${1:l}" "/opt/homebrew/opt/cli-utils/share/cli-utils/"
-		# _cli_utils_main "${0:t}" "${1:l}" "<<FN_DIR>>"
+		# _cli_utils_main "${0:t}" "${1:l}" "/opt/homebrew/opt/cli-utils/share/cli-utils/"
+		_cli_utils_main "${0:t}" "${1:l}" "__OPT_PKGSHARE__"
 } always {
 	unset -f _cli_utils_main _init_func _update_line _initsrc _install
 }

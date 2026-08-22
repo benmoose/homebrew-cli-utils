@@ -1,14 +1,16 @@
 # _spinner <pid> [<msg>] - Show a spinner until the job with <pid> is finished
 builtin emulate -L zsh
 
-local -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
+[[ -t 1 ]] || return
 
-local -ar spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆')
-local -ar frames=(${(ws::)spinners[(($RANDOM%${#spinners[@]} + 1))]})
 local -i i
+local -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
+local -ar \
+	spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆') \
+	frames=(${(ws::)spinners[(($RANDOM%${#spinners[@]} + 1))]})
 
-while kill -0 "${pid_arg}" 2> /dev/null; do
-	printf "%s%s%s%s %s " "${CR}" "${style_arg}" "${frames[((i % ${#frames[@]} + 1))]}" "${NS}" "${msg_arg}"
+while kill -0 "${pid_arg}" &> /dev/null; do
+	printf "${CR}%s${NS}%s %s " "${style_arg}" "${frames[((i % ${#frames[@]} + 1))]}" "${msg_arg}"
 	((i++))
 	sleep 0.042
 done
