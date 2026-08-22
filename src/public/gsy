@@ -1,0 +1,21 @@
+# gsy - (git-sync) are the HEAD and origin refs equal
+
+builtin emulate -L zsh
+set -o pipefail
+
+if ! _git_repo; then return 1; fi
+
+git fetch --no-auto-gc --no-tags --quiet origin || return $?
+
+local -r \
+	opt_arg="${1:+1}" \
+	head_obj="$(git rev-parse --short --verify -q HEAD)" \
+	upstream_obj="$(git rev-parse --short --verify -q HEAD@{upstream})" \
+	curr_b="$(git symbolic-ref -q --short HEAD)"
+
+if [[ "${head_obj}" != "${upstream_obj}" ]]; then
+	[[ "${1}" != "-q" ]] && _err "${0}: not in sync with branch at remote"	
+	return 1
+fi
+
+[[ "${1}" != "-q" ]] && printf "%s: in sync with branch at remote\n" "${0}"
