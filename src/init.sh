@@ -7,10 +7,9 @@ if [[ -z ${ZSH_VERSION-} ]]; then
 	exit 1
 fi
 
-if [[ ${zsh_eval_context[-1]:-toplevel} != "file" ]]; then
-	command printf "${0:t}: must be sourced, not executed\n" >&2
-	exit 1
-fi
+_is_source_ctx() {
+	[[ ${zsh_eval_context[-1]:-toplevel} == "file" ]]
+}
 
 _dotfile() {
 	if [[ -e ${ZDOTDIR:-~}/.zshrc(:a) ]] || [[ ${SHELL-} == *zsh ]]; then
@@ -22,6 +21,11 @@ _dotfile() {
 
 _init() {
 	local -r name="${1}" fn_dir="${2}"
+
+	if ! _is_source_ctx; then
+		command printf "fatal: %s --zsh is intended to be sourced, not executed\n" "${name}" >&2
+		return 1
+	fi
 
 	if [[ ! -d ${fn_dir} ]]; then
 		command printf \
@@ -103,6 +107,11 @@ EOF
 
 _install() {
 	local -r name="${1}" dest="$(_dotfile)"
+
+	if _is_source_ctx; then
+		command printf "fatal: %s --install is intended to be executed, not sourced\n" "${name}" >&2
+		return 1
+	fi
 
 	if [[ ! -f ${dest} || ! -w ${dest} ]]; then
 		command printf "%s: %s is missing or unwritable" "${name}" "${dest:t}" >&2
