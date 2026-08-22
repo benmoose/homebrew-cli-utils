@@ -55,9 +55,8 @@ _update_line() {
 		line="${1}" \
 		file="${2}" \
 		pat="${3}" \
-		matched
+		matched=""
 
-	command printf "Checking %s...\n" "${file:t}"
 	if [[ -f ${file} ]]; then
 		if [[ -n ${pat} ]]; then
 			matched=$(command grep -nF "${pat}" ${file})
@@ -67,7 +66,7 @@ _update_line() {
 	fi
 
 	if [[ -n ${matched} ]]; then
-		command printf "  found pattern match in file\n"
+		command printf "Found matching line in %s\n" "${file:t}"
 		command sed 's/^/    → /' <<<"${matched}"
 		return
 	fi
@@ -77,19 +76,9 @@ _update_line() {
 		return 1
 	fi
 
-	local file_backup=$(mktemp -q -t="${file:t}-backup")
-	builtin trap 'rm -rf "${file_backup}"' EXIT
-	if [[ $? -ne 0 ]]; then
-		command printf "fatal: failed to create temp file, exiting..." >&2
-		return 1
-	fi
-	cat "${file}" >"${file_backup}"
-	builtin trap 'cat "${file_backup}" > "${file:h}/.zshrc-backup"; return 130' INT TERM
-
 	command printf "Writing to %s:\n" "${file:t}"
-	[[ -n "$(command tail -n 1 ${file})" ]] && builtin print >>"${file}"
+	[[ -n "$(command tail -n 1 ${file})" ]] && command printf "\n" >>"${file}"
 	while read -r src_line; do
-		builtin print "  ${src_line}"
 		builtin print "${src_line}" >>"${file}"
 	done <<<"${line}\n"
 
