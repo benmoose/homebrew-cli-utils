@@ -23,7 +23,7 @@ _init() {
 	local -r name="${1}" fn_dir="${2}"
 
 	if ! _is_source_ctx; then
-		command printf "fatal: %s --zsh is intended to be sourced, not executed\n" "${name}" >&2
+		command printf "fatal: %s is intended to be sourced, not executed\n" "${name}" >&2
 		return 1
 	fi
 
@@ -88,21 +88,12 @@ _update_line() {
 
 	command printf "Writing to %s:\n" "${file:t}"
 	[[ -n "$(command tail -n 1 ${file})" ]] && builtin print >>"${file}"
-
 	while read -r src_line; do
-		command printf "  %s\n" "${src_line}"
+		builtin print "  ${src_line}"
 		builtin print "${src_line}" >>"${file}"
-		((added++))
-	done <<<"${line}"
+	done <<<"${line}\n"
 
-	command printf "Finished writing to %s. Added %s lines.\n" "${file:t}" "$(cat ${line} | wc -l)"
-}
-
-_source_src() {
-	cat <<EOF
-# benmoose/cli-utils
-which ${1} &>/dev/null && source \$(which ${1})
-EOF
+	command printf "Updated %s: %s lines added.\n" "${file:t}" "$(wc -l <<<${line})"
 }
 
 _install() {
@@ -118,9 +109,13 @@ _install() {
 		return 1
 	fi
 
-	local -r \
-		src="$(_source_src ${name})" \
-		pattern="source \$(which ${name})"
+	local -r pattern="source \$(which ${name})"
+	local -r src=$(
+		cat <<EOS
+# benmoose/cli-utils
+which ${name} &>/dev/null && ${pattern}
+EOS
+	)
 
 	_update_line "${src}" "${dest}" "${pattern}"
 }
@@ -155,7 +150,5 @@ _cli_utils_main() {
 
 	_cli_utils_main "${0:a:t}" "__OPT_PKGSHARE__" "${1-}"
 } always {
-	unset -f _cli_utils_main _init _install _update_line _source_src _dotfile
-
-	(( TRY_BLOCK_ERROR = 0 ))
+	unset -f _cli_utils_main _init _install _update_line _dotfile _is_source_ctx
 }
