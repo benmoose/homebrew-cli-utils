@@ -101,7 +101,7 @@ _update_line() {
 _source_src() {
 	cat <<EOF
 # benmoose/cli-utils
-whence -cap ${1} &>/dev/null && source \$(${1} --zsh)
+which ${1} &>/dev/null && source \$(which ${1})
 EOF
 }
 
@@ -120,26 +120,24 @@ _install() {
 
 	local -r \
 		src="$(_source_src ${name})" \
-		pattern="source (${name} --zsh)"
+		pattern="source \$(which ${name})"
 
-	_update_line "${src}" "${dest}" "source (${name} --zsh)"
+	_update_line "${src}" "${dest}" "${pattern}"
 }
 
 _cli_utils_main() {
 	emulate -L zsh
 	set -u
 
-	[[ $# == 3 ]] || return 1
+	declare -r name="${1}" fn_dir="${2:a}" op_arg="${3:l}"
 
-	declare -r name="${1}" op_arg="${2:l}" fn_dir="${3:a}"
-
-	if [[ ${op_arg} == "--install" ]]; then
-		_install "${name}"
+	if [[ -z ${op_arg} ]]; then
+		_init "${name}" "${fn_dir}"
 		return $?
 	fi
 
-	if [[ ${op_arg} == "--zsh" ]]; then
-		_init "${name}" "${fn_dir}"
+	if [[ ${op_arg} == "--install" ]]; then
+		_install "${name}"
 		return $?
 	fi
 
@@ -148,13 +146,14 @@ _cli_utils_main() {
 }
 
 {
-	if [[ $# != 1 ]]; then
-		command printf "%s: missing required param\n" "${0:t}" >&2
+	if [[ $# > 1 ]]; then
+		command printf "%s: too many params, expected at most 1\n" "${0:t}" >&2
 		return 1
 	fi
 
 	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
-	_cli_utils_main "${0:a:t}" "${1-}" "__OPT_PKGSHARE__"
+
+	_cli_utils_main "${0:a:t}" "__OPT_PKGSHARE__" "${1-}"
 } always {
 	unset -f _cli_utils_main _init _install _update_line _source_src _dotfile
 

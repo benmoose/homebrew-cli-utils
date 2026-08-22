@@ -24,7 +24,7 @@ class CliUtils < Formula
     <<~EOS
       cli-utils installed! To make Add this to your .zshrc:
 
-        source $(cli-utils --init)
+        source $(which cli-utils)
 
     EOS
   end
