@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.59.tar.gz"
-  sha256 "a4033affec2dcc667ae64dcfd44d4b43fb4f5fb61bf673cc80eb0561024e1658"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.60.tar.gz"
+  sha256 "3b05c3e164f848430def70ece9026240bb03addfb5c6ccca72f794c7c3b4bcd8"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -30,7 +30,7 @@ class CliUtils < Formula
   end
 
   test do
-    
+
     assert_match("builtin autoload", shell_output("zsh -c 'source #{opt_pkgshare} uuid && $functions[uuid]'"))
 
     uuid_out = shell_output("zsh -c 'uuid'").rstrip
