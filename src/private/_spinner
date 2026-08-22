@@ -2,9 +2,10 @@
 builtin emulate -L zsh
 
 [[ -t 1 ]] || return
+[[ -n "${1}" ]] || return 1
 
-local -i i
 local -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
+local -i i
 local -ar \
 	spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆') \
 	frames=(${(ws::)spinners[(($RANDOM%${#spinners[@]} + 1))]})

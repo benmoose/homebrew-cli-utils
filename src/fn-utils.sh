@@ -18,6 +18,6 @@ local _tputenv=$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)
 
 if [[ "${_tputenv}" == "10" ]]; then
 	declare -rx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
-		MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) BOLD=$(tput bold) DIM=$(tput dim) \
-		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
+	MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) BOLD=$(tput bold) DIM=$(tput dim) \
+	CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
 fi

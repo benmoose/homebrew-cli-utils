@@ -2,39 +2,47 @@
 # Must be sourced (not executed) from an interactive zsh, e.g. in .zshrc:
 #   source "/path/to/init.sh"
 
-set -u
+if [[ -z "${ZSH_VERSION-}" ]]; then
+	command printf "${0:t}: expect zsh shell\n" >&2
+	exit 1
+fi
 
-echo "source: ${_:-}"
+if [[ "${zsh_eval_context[-1]:-toplevel}" != "file" ]]; then
+	command printf "${0:t}: must be sourced, not executed\n" >&2
+	exit 1
+fi
 
-return 0
-
-_is_zsh() {
-	[ -n "${ZSH_VERSION-}" ]
+_dotfile() {
+	if [[ -e ${ZDOTDIR:-~}/.zshrc(:a) ]] || [[ "${SHELL-}" == *zsh ]]; then
+		echo ${ZDOTDIR:-~}/.zshrc(:a)
+	else
+		echo ${HOME:-~}/.bashrc(:a)
+	fi
 }
 
-_init_func () {
-	export -U FPATH fpath
+_init() {
+	local -r name="${1}" fn_dir="${2}"
 
-	[[ -z "${1}" ]] && return 1
-
-	if [[ -z ${fpath[(r)"${1:a}"]} ]]; then
-		fpath+=("${1:a}")
-	fi
-
-	if [[ ! -d "${1:a}" ]]; then
-		printf >&2 \
-				"%s: functions missing, try reinstalling with \`brew reinstall %s\`\n" \
-				"${name}" "${name}"
+	if [[ ! -d "${fn_dir}" ]]; then
+		command printf \
+			"%s: functions not found, try reinstalling ${2} with \`brew reinstall %s\`\n" \
+			"${name}" "${name}" >&2
 		return 1
 	fi
 
-	builtin autoload -Uz ${1:a}/*(:t)
+	export -U FPATH fpath
+	if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
+		fpath+=("${fn_dir}")
+	fi
+
+	builtin autoload -Uz ${fn_dir}/*(:t)
+	command printf "%s: autoloading complete\n" "${name}"
 
 	if [[ "$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)" != "10" ]]; then
 		declare -grx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
-			MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) \
-			BOLD=$(tput bold) DIM=$(tput dim) \
-			CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
+		MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) \
+		BOLD=$(tput bold) DIM=$(tput dim) \
+		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
 	fi
 }
 
@@ -43,50 +51,68 @@ _update_line() {
 		line="${1}" \
 		file="${2}" \
 		pat="${3}" \
-		lines=""
+		matched
 
-	echo "Checking ${file:t}..."
+	command printf "Checking %s...\n" "${file:t}"
 	if [[ -f "${file}" ]]; then
 		if [[ -n "${pat}" ]]; then
-			lines=$(\grep -nF "${pat}" "${file}")
+			matched=$(command grep -nF "${pat}" ${file})
 		else
-			lines=$(\grep -nF "${line#"${line%%[![:space:]]*}"}")
+			matched=$(command grep -nF "${line#"${line%%[![:space:]]*}"}")
 		fi
 	fi
 
-	if [[ -n "${lines}" ]]; then
-		echo "  line already exists in ${file:t}"
-		sed 's/^/    → /' <<< "${lines}"
+	if [[ -n "${matched}" ]]; then
+		command printf "  found pattern match in file\n"
+		command sed 's/^/    → /' <<<"${matched}"
 		return
 	fi
 
-	echo "Writing ${file:t}:"
-	[[ -f "${file}" ]] && echo >> "${file}"
-	while read -r l; do
-		echo "  ${l}"
-		echo "${l}" >> "${file}";
-	done <<< "${line}"
-
-	echo "Done"
-}
-
-_initsrc() {
-	cat << EOF
-# benmoose/cli-utils
-brew list --formulae cli-utils &>/dev/null && source $(__NAME__ --zsh)
-EOF
-}
-
-_install () {
-	local dest
-	[[ "${SHELL}" =~ zsh$ ]] && dest=${ZDOTDIR:-~}/.zshrc || dest=${HOME:-~}/.bashrc
-	
-	if [[ ! -f "${dest}" || ! -w "${dest}" ]]; then
-		echo "error: .zshrc is missing or unwritable"
+	if ! [[ -f "${file}" && -w "${file}" ]]; then
+		command printf "%s is not a writable file\n" "${file:t}" >&2
 		return 1
 	fi
 
-	_update_line "$(_initsrc)" "${dest}" "${name} --zsh"
+	local file_backup=$(mktemp -q -t="${file:t}-backup")
+	builtin trap 'rm -rf "${file_backup}"' EXIT
+	if [[ $? -ne 0 ]]; then
+		command printf "fatal: failed to create temp file, exiting..." >&2
+		return 1
+	fi
+	cat "${file}" >"${file_backup}"
+	builtin trap 'cat "${file_backup}" > "${file:h}/.zshrc-backup"; return 130' INT TERM
+
+	command printf "Writing to %s:\n" "${file:t}"
+	[[ -n "$(command tail -n 1 ${file})" ]] && builtin print >>"${file}"
+
+	while read -r src_line; do
+		command printf "  %s\n" "${src_line}"
+		builtin print "${src_line}" >>"${file}"
+		((added++))
+	done <<<"${line}"
+
+	command printf "Finished writing to %s. Added %s lines.\n" "${file:t}" "$(cat ${line} | wc -l)"
+}
+
+_source_src() {
+	cat <<EOF
+# benmoose/cli-utils
+brew list --formulae ${1} &>/dev/null && source \$(${1} --zsh)
+EOF
+}
+
+_install() {
+	local -r name="${1}" dest="$(_dotfile)"
+
+	if [[ ! -f "${dest}" || ! -w "${dest}" ]]; then
+		command printf "error: %s is missing or unwritable" "${dest:t}" >&2
+		return 1
+	fi
+
+	local -r src="$(_source_src ${name})"
+	command printf "%s: src::\n\n%s\n\n" "${name}" "${src}"
+
+	_update_line "${src}" "${dest}" "source (${name} --zsh)"
 }
 
 _cli_utils_main() {
@@ -95,25 +121,33 @@ _cli_utils_main() {
 
 	[[ $# == 3 ]] || return 1
 
-	declare -r name="${1}" op_arg="${2}" fn_dir="${3:a}"
+	declare -r name="${1}" op_arg="${2:l}" fn_dir="${3:a}"
+
+	if [[ "${op_arg}" == "--install" ]]; then
+		_install "${name}"
+		return $?
+	fi
 
 	if [[ "${op_arg}" == "--zsh" ]]; then
-		_init_func "${fn_dir:a}"
+		_init "${name}" "${fn_dir}"
 		return $?
 	fi
 
-	if [[ "${op_arg}" == "--init" ]]; then
-		_install
-		return $?
-	fi
+	command printf "%s: unexpected param '%s'\n" "${name}" "${op_arg}" >&2
+	return 1
 }
 
 {
-	[[ $# == 1 ]] && \
-		# _cli_utils_main "${0:t}" "${1:l}" "/opt/homebrew/opt/cli-utils/share/cli-utils/"
-		_cli_utils_main "${0:t}" "${1:l}" "__OPT_PKGSHARE__"
-} always {
-	unset -f _cli_utils_main _init_func _update_line _initsrc _install
-}
+	if [[ $# != 1 ]]; then
+		command printf "%s: missing required param\n" "${0:t}" >&2
+		return 1
+	fi
 
-return $?
+	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
+
+	_cli_utils_main "${0:a:t}" "${1-}" "__OPT_PKGSHARE__"
+} always {
+	unset -f _cli_utils_main _init _install _update_line _source_src _dotfile
+
+	(( TRY_BLOCK_ERROR = 0 ))
+}
