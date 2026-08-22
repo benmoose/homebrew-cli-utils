@@ -2,28 +2,28 @@
 # Must be sourced (not executed) from an interactive zsh, e.g. in .zshrc:
 #   source "/path/to/init.sh"
 
-if [[ -z "${ZSH_VERSION-}" ]]; then
+if [[ -z ${ZSH_VERSION-} ]]; then
 	command printf "${0:t}: expect zsh shell\n" >&2
 	exit 1
 fi
 
-if [[ "${zsh_eval_context[-1]:-toplevel}" != "file" ]]; then
+if [[ ${zsh_eval_context[-1]:-toplevel} != "file" ]]; then
 	command printf "${0:t}: must be sourced, not executed\n" >&2
 	exit 1
 fi
 
 _dotfile() {
-	if [[ -e ${ZDOTDIR:-~}/.zshrc(:a) ]] || [[ "${SHELL-}" == *zsh ]]; then
-		echo ${ZDOTDIR:-~}/.zshrc(:a)
+	if [[ -e ${ZDOTDIR:-~}/.zshrc(:a) ]] || [[ ${SHELL-} == *zsh ]]; then
+		builtin echo ${ZDOTDIR:-~}/.zshrc(:a)
 	else
-		echo ${HOME:-~}/.bashrc(:a)
+		builtin echo ${HOME:-~}/.bashrc(:a)
 	fi
 }
 
 _init() {
 	local -r name="${1}" fn_dir="${2}"
 
-	if [[ ! -d "${fn_dir}" ]]; then
+	if [[ ! -d ${fn_dir} ]]; then
 		command printf \
 			"%s: functions not found, try reinstalling ${2} with \`brew reinstall %s\`\n" \
 			"${name}" "${name}" >&2
@@ -54,21 +54,21 @@ _update_line() {
 		matched
 
 	command printf "Checking %s...\n" "${file:t}"
-	if [[ -f "${file}" ]]; then
-		if [[ -n "${pat}" ]]; then
+	if [[ -f ${file} ]]; then
+		if [[ -n ${pat} ]]; then
 			matched=$(command grep -nF "${pat}" ${file})
 		else
 			matched=$(command grep -nF "${line#"${line%%[![:space:]]*}"}")
 		fi
 	fi
 
-	if [[ -n "${matched}" ]]; then
+	if [[ -n ${matched} ]]; then
 		command printf "  found pattern match in file\n"
 		command sed 's/^/    → /' <<<"${matched}"
 		return
 	fi
 
-	if ! [[ -f "${file}" && -w "${file}" ]]; then
+	if ! [[ -f ${file} && -w ${file} ]]; then
 		command printf "%s is not a writable file\n" "${file:t}" >&2
 		return 1
 	fi
@@ -97,20 +97,21 @@ _update_line() {
 _source_src() {
 	cat <<EOF
 # benmoose/cli-utils
-brew list --formulae ${1} &>/dev/null && source \$(${1} --zsh)
+whence -cap ${1} &>/dev/null && source \$(${1} --zsh)
 EOF
 }
 
 _install() {
 	local -r name="${1}" dest="$(_dotfile)"
 
-	if [[ ! -f "${dest}" || ! -w "${dest}" ]]; then
-		command printf "error: %s is missing or unwritable" "${dest:t}" >&2
+	if [[ ! -f ${dest} || ! -w ${dest} ]]; then
+		command printf "%s: %s is missing or unwritable" "${name}" "${dest:t}" >&2
 		return 1
 	fi
 
-	local -r src="$(_source_src ${name})"
-	command printf "%s: src::\n\n%s\n\n" "${name}" "${src}"
+	local -r \
+		src="$(_source_src ${name})" \
+		pattern="source (${name} --zsh)"
 
 	_update_line "${src}" "${dest}" "source (${name} --zsh)"
 }
@@ -123,12 +124,12 @@ _cli_utils_main() {
 
 	declare -r name="${1}" op_arg="${2:l}" fn_dir="${3:a}"
 
-	if [[ "${op_arg}" == "--install" ]]; then
+	if [[ ${op_arg} == "--install" ]]; then
 		_install "${name}"
 		return $?
 	fi
 
-	if [[ "${op_arg}" == "--zsh" ]]; then
+	if [[ ${op_arg} == "--zsh" ]]; then
 		_init "${name}" "${fn_dir}"
 		return $?
 	fi
@@ -144,8 +145,7 @@ _cli_utils_main() {
 	fi
 
 	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
-
-	_cli_utils_main "${0:a:t}" "${1-}" "__OPT_PKGSHARE__"
+	_cli_utils_main "${0:a:t}" "${1-}" "/opt/homebrew/opt/cli-utils/share/cli-utils/"
 } always {
 	unset -f _cli_utils_main _init _install _update_line _source_src _dotfile
 
