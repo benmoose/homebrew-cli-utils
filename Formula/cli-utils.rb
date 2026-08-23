@@ -16,18 +16,29 @@ class CliUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
+    inreplace "src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh"
+    libexec.install "src/install.zsh"
+    
     pkgshare.install "src/init.zsh"
+  end
 
-    # inreplace("src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh")
+  post_install_steps do
+    run "install.zsh", base: :libexec
   end
 
   def post_install
     dotfile = Pathname.new(Dir.home) / ".zshrc"
     source_line = %Q(source "#{opt_pkgshare}/init.zsh")
-
     ohai "dotfile: (#{dotfile.exist?}) #{dotfile}"
-    ohai "source: #{source_line}"
+    real_home = Pathname.new(Etc.getpwuid(Process.uid).dir)
+    real_dotfile = real_home / ".zshrc"
+    ohai "real_home: (#{real_dotfile.exist?}) #{real_home}"
+
+    # Bail quietly if user does not have .zshrc
     return unless dotfile.exist?
+
+    ohai "source: #{source_line}"
+
     return if dotfile.read.include?(source_line)
 
     dotfile.open("a") do |f|

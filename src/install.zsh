@@ -53,8 +53,8 @@ _install() {
 	set -u
 	local -r name="${1}"
 
-	if [[ -n "${ZDOTDIR}" ]]; then
-		dest="${ZDOTDIR:-~}/.zshrc"
+	if [[ -n "${ZDOTDIR-}" ]]; then
+		dest="${ZDOTDIR}/.zshrc"
 	else
 		dest="${HOME:-~}/.zshrc"
 	fi

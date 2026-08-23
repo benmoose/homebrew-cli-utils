@@ -17,22 +17,6 @@ _is_sourced() {
 _init() {
 	emulate -L zsh
 	set -u
-	# local -r name="${1}" fn_dir="${2:a}"
-
-	# if [[ ! -d ${fn_dir} ]]; then
-	# 	command printf \
-	# 		"%s: functions not found, try reinstalling ${2} with \`brew reinstall %s\`\n" \
-	# 		"${name}" "${name}" >&2
-	# 	return 1
-	# fi
-
-	# export -U FPATH fpath
-	# if [[ -z ${fpath[(r)${fn_dir}]} ]]; then
-	# 	fpath+=("${fn_dir}")
-	# fi
-
-	# builtin autoload -Uz ${fn_dir}/*(:t)
-	# command printf "%s: autoloading complete\n" "${name}"
 
 	if [[ "$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)" != "10" ]]; then
 		declare -grx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
@@ -44,8 +28,6 @@ _init() {
 
 {
 	_is_sourced && _init
-
-	# _init "${0:a:t}" "__OPT_PKGSHARE__"
 } always {
 	unset -f _is_sourced _init
 }
