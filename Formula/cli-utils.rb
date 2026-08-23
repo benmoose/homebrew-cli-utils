@@ -13,27 +13,26 @@ class CliUtils < Formula
 
   def install
     prefix.install_metafiles
+    
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
+    
+    inreplace "src/init.zsh", "__FN_DIR__", zsh_function
+    libexec.install Dir["src/*.zsh"]
 
-    inreplace "src/init.zsh", "__FN_AUTOLOAD_DIR__", zsh_function
-    pkgshare.install "src/init.zsh"
-    pkgshare.install "src/install.zsh"
+    bin.install_symlink libexec/"install.zsh" => "#{name}-install"
   end
 
   def caveats
     <<~EOS
-      To load #{name} shared variables, add the following to your .zshrc:
+      To load #{name} shared variables, run:
+        #{name}-install
+      which adds the following to your .zshrc:
         source "#{opt_pkgshare}/init.zsh"
-      or run
-        #{opt_pkgshare}/install.zsh
     EOS
   end
 
-  # test do
-  #   assert_match("builtin autoload", shell_output("zsh -c 'source #{opt_pkgshare} uuid && $functions[uuid]'"))
-
-  #   uuid_out = shell_output("zsh -c 'uuid'").rstrip
-  #   assert_match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, uuid_out)
-  # end
+  test do
+    expect(formula.pkgshare).to be_a_directory
+  end
 end

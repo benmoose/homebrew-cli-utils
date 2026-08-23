@@ -50,7 +50,9 @@ _update_line() {
 _install() {
 	emulate -L zsh
 	set -u
-	local -r init_path="${1:a:h}/init.zsh" name="${1:t}"
+	local -r init_path="${1:h}/init.zsh" name="${1:t}"
+	
+	command printf "0: %s\n" "${1}"
 
 	[[ -n "${ZDOTDIR-}" ]] && dest="${ZDOTDIR}/.zshrc" || dest="${HOME:-~}/.zshrc"
 
@@ -63,7 +65,7 @@ _install() {
 	local -r src=$(
 		cat <<EOS
 # Load cli-utils
-[[ -f "${init_path}" ]] && ${pattern}
+${pattern}
 EOS
 	)
 
@@ -74,11 +76,12 @@ EOS
 	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
 
 	if _is_sourced; then
-		command printf "fatal: %s is intended to be run interactively or by a script\n" "${0:t}" >&2
+		command printf "%s: should be executed interactively or by a script\n" "${0:t}" >&2
 		return 1
 	fi
 
-	_install "${0:a}"
+	_install "${0:a}" &&
+		source "${0:a:h}/init.zsh"
 } always {
 	unset -f _install _update_line _is_sourced
 }

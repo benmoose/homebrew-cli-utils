@@ -16,22 +16,13 @@ _is_sourced() {
 _init() {
 	emulate -L zsh
 	set -u
-	local -r \
-		name="${1:t}" \
-		fn_autoload_dir="${2:a}"
+	local -r fn_dir="${1:a}"
 
-	if [[ ! -d ${fn_autoload_dir} ]]; then
+	if ! [[ -d "${fn_dir}" ]]; then
 		command printf \
-			"%s: expect function directory at %s, try reinstalling with \`brew reinstall cli-utils\`\n" \
-			"${name}" "${fn_autoload_dir}" >&2
+			"fatal: installed functions not found, expect directory at %s. Try running \"brew reinstall cli-utils\"\n" "${fn_dir}" >&2
 		return 1
 	fi
-
-	export -U FPATH fpath
-
-	[[ -z ${fpath[(r)${fn_autoload_dir}]} ]] && fpath+=("${fn_autoload_dir}")
-
-	builtin autoload -Uz ${fn_autoload_dir}/*(:t)
 
 	if [[ "$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)" != "10" ]]; then
 		declare -grx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
@@ -39,10 +30,13 @@ _init() {
 		BOLD=$(tput bold) DIM=$(tput dim) \
 		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
 	fi
+
+	builtin autoload -Uz ${fn_dir}/*(:t)
 }
 
 {
-	_is_sourced && _init "${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}" "__FN_AUTOLOAD_DIR__"
+	_is_sourced &&
+		_init "__FN_DIR__"
 } always {
 	unset -f _is_sourced _init
 }
