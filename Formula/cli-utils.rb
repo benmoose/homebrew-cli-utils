@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.66.tar.gz"
-  sha256 "c98c612b8615e06a1f95959ca020a637a97d9021ce2c5697748378577940cd65"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.67.tar.gz"
+  sha256 "4c353c0b08e0193e0cc457322cbed936cb6c92240a3e37dc35d2a15089918515"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -18,21 +18,15 @@ class CliUtils < Formula
 
     inreplace "src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh"
     libexec.install "src/install.zsh"
-    
     pkgshare.install "src/init.zsh"
-  end
-
-  post_install_steps do
-    run "install.zsh", base: :libexec
   end
 
   def post_install
     dotfile = Pathname.new(Dir.home) / ".zshrc"
-    source_line = %Q(source "#{opt_pkgshare}/init.zsh")
     ohai "dotfile: (#{dotfile.exist?}) #{dotfile}"
-    real_home = Pathname.new(Etc.getpwuid(Process.uid).dir)
-    real_dotfile = real_home / ".zshrc"
-    ohai "real_home: (#{real_dotfile.exist?}) #{real_home}"
+    real_dotfile = Pathname.new(Etc.getpwuid(Process.uid).dir) / ".zshrc"
+    ohai "real_home: (#{real_dotfile.exist?}) #{real_dotfile}"
+    source_line = %Q(source "#{opt_pkgshare}/init.zsh")
 
     # Bail quietly if user does not have .zshrc
     return unless dotfile.exist?
