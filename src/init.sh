@@ -8,7 +8,10 @@ if [[ -z ${ZSH_VERSION-} ]]; then
 fi
 
 _is_source_ctx() {
-	[[ ${zsh_eval_context[-1]:-toplevel} == "file" ]]
+	for ctx in ${zsh_eval_context}; do
+		if [[ "${ctx}" == "file" ]]; then return 0; fi
+	done
+	return 1
 }
 
 _dotfile() {
