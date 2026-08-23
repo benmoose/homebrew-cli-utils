@@ -16,10 +16,9 @@ class CliUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
-    pkgshare.install "src/init.zsh"
-
     inreplace "src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh"
-    bin.install "src/install.zsh" => "install-#{name}"
+    pkgshare.install "src/install.zsh"
+    pkgshare.install "src/init.zsh"
   end
 
   def caveats
@@ -27,7 +26,7 @@ class CliUtils < Formula
       To load #{name} shared variables, add the following to your .zshrc:
         source "#{opt_pkgshare}/init.zsh"
       or
-        install-#{name}
+        #{opt_pkgshare}/install.zsh
     EOS
   end
 

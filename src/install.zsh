@@ -1,6 +1,5 @@
 #!/usr/bin/env zsh
-# Must be executed (not sourced) from an interactive zsh, e.g. in .zshrc:
-#   source "__INIT_PATH__"
+# Must be executed (not sourced) from an interactive zsh, e.g. in .zshrc
 
 if [[ -z ${ZSH_VERSION-} ]]; then
 	command printf "${0:t}: expect zsh shell\n" >&2
@@ -51,13 +50,9 @@ _update_line() {
 _install() {
 	emulate -L zsh
 	set -u
-	local -r name="${1}"
+	local -r dir="${1:a:h}/init.zsh" name="${1:t}"
 
-	if [[ -n "${ZDOTDIR-}" ]]; then
-		dest="${ZDOTDIR}/.zshrc"
-	else
-		dest="${HOME:-~}/.zshrc"
-	fi
+	[[ -n "${ZDOTDIR-}" ]] && dest="${ZDOTDIR}/.zshrc" || dest="${HOME:-~}/.zshrc"
 
 	if [[ ! -f ${dest} || ! -w ${dest} ]]; then
 		command printf "%s: %s is missing or unwritable" "${name}" "${dest:t}" >&2
@@ -65,11 +60,11 @@ _install() {
 	fi
 
 	# local -r pattern="source \$(which ${name})"
-	local -r pattern="source \"__INIT_PATH__\""
+	local -r pattern="source \"${dir}\""
 	local -r src=$(
 		cat <<EOS
-# benmoose/cli-utils
-which ${name} &>/dev/null && ${pattern}
+# Load cli-utils
+[[ -f "${dir}" ]] && ${pattern}
 EOS
 	)
 
@@ -84,7 +79,7 @@ EOS
 		return 1
 	fi
 
-	_install "${0:t}" && command printf "Install complete\n"
+	_install "${0:a}" && command printf "Install complete\n"
 } always {
 	unset -f _install _update_line _is_sourced
 }

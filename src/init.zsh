@@ -1,10 +1,9 @@
 #!/usr/bin/env zsh
-# Must be sourced (not executed) from an interactive zsh, e.g. in .zshrc:
-#   source "/path/to/init.sh"
+# Must be sourced (not executed) from an interactive zsh, e.g. in .zshrc
 
 if [[ -z ${ZSH_VERSION-} ]]; then
 	command printf "${0:t}: expect zsh shell\n" >&2
-	exit 1
+	false
 fi
 
 _is_sourced() {
