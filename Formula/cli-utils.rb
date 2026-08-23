@@ -16,6 +16,7 @@ class CliUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
+    inreplace "src/init.zsh", "__FN_AUTOLOAD_DIR__", zsh_function
     pkgshare.install "src/init.zsh"
     pkgshare.install "src/install.zsh"
   end
