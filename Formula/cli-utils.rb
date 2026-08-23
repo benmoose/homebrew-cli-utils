@@ -16,38 +16,18 @@ class CliUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
-    inreplace "src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh"
-    libexec.install "src/install.zsh"
     pkgshare.install "src/init.zsh"
-  end
 
-  def post_install
-    dotfile = Pathname.new(Dir.home) / ".zshrc"
-    ohai "dotfile: (#{dotfile.exist?}) #{dotfile}"
-    real_dotfile = Pathname.new(Etc.getpwuid(Process.uid).dir) / ".zshrc"
-    ohai "real_home: (#{real_dotfile.exist?}) #{real_dotfile}"
-    source_line = %Q(source "#{opt_pkgshare}/init.zsh")
-
-    # Bail quietly if user does not have .zshrc
-    return unless dotfile.exist?
-
-    ohai "source: #{source_line}"
-
-    return if dotfile.read.include?(source_line)
-
-    dotfile.open("a") do |f|
-      f.puts ""
-      f.puts "# #{full_name}"
-      f.puts source_line
-    end
-
-    ohai "Added #{name} to #{dotfile}. Restart your shell or run: `source #{zshrc}`"
+    inreplace "src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh"
+    bin.install "src/install.zsh" => "install-#{name}"
   end
 
   def caveats
     <<~EOS
       To load #{name} shared variables, add the following to your .zshrc:
         source "#{opt_pkgshare}/init.zsh"
+      or
+        install-#{name}
     EOS
   end
 
