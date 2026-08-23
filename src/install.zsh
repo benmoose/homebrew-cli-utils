@@ -29,8 +29,8 @@ _update_line() {
 	fi
 
 	if [[ -n ${matched} ]]; then
-		command printf "Line already in %s:\n" "${file:t}"
-		command sed 's/^  → /' <<<"${matched}"
+		command printf "%s contains matching line:\n" "${file:t}"
+		command sed 's/^    → /' <<<"${matched}"
 		return
 	fi
 
@@ -50,7 +50,7 @@ _update_line() {
 _install() {
 	emulate -L zsh
 	set -u
-	local -r dir="${1:a:h}/init.zsh" name="${1:t}"
+	local -r init_path="${1:a:h}/init.zsh" name="${1:t}"
 
 	[[ -n "${ZDOTDIR-}" ]] && dest="${ZDOTDIR}/.zshrc" || dest="${HOME:-~}/.zshrc"
 
@@ -59,12 +59,11 @@ _install() {
 		return 1
 	fi
 
-	# local -r pattern="source \$(which ${name})"
-	local -r pattern="source \"${dir}\""
+	local -r pattern="source \"${init_path}\""
 	local -r src=$(
 		cat <<EOS
 # Load cli-utils
-[[ -f "${dir}" ]] && ${pattern}
+[[ -f "${init_path}" ]] && ${pattern}
 EOS
 	)
 
@@ -79,7 +78,7 @@ EOS
 		return 1
 	fi
 
-	_install "${0:a}" && command printf "Install complete\n"
+	_install "${0:a}"
 } always {
 	unset -f _install _update_line _is_sourced
 }
