@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.64.tar.gz"
-  sha256 "7df7c8bee4de098e805e913af7d3caff8eb291e8e6a0ba8fcff62571a05846a5"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.65.tar.gz"
+  sha256 "2cf9c2ee0b8926335955e1e93931a95ff82da65df05592c5f0ce45cbf293f73b"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -25,8 +25,9 @@ class CliUtils < Formula
     dotfile = Pathname.new(Dir.home) / ".zshrc"
     source_line = %Q(source "#{opt_pkgshare}/init.zsh")
 
+    ohai "dotfile: (#{dotfile.exist?}) #{dotfile}"
+    ohai "source: #{source_line}"
     return unless dotfile.exist?
-
     return if dotfile.read.include?(source_line)
 
     dotfile.open("a") do |f|
@@ -41,7 +42,7 @@ class CliUtils < Formula
   def caveats
     <<~EOS
       To load #{name} shared variables, add the following to your .zshrc:
-        source "#{opt_pkgshare}/cli-utils-init"
+        source "#{opt_pkgshare}/init.zsh"
     EOS
   end
 
