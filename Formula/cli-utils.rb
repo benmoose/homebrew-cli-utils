@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.68.tar.gz"
-  sha256 "e427b049a3cf20c85710653ce199354b3fb3dd2e28cabafac132df1fd58ccdae"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.69.tar.gz"
+  sha256 "4f1a210f9e3ead2bc7d9b5ccd7328f1fe6fae91b67c2e5989edaef92c4d56250"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -16,16 +16,15 @@ class CliUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
-    inreplace "src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh"
-    pkgshare.install "src/install.zsh"
     pkgshare.install "src/init.zsh"
+    pkgshare.install "src/install.zsh"
   end
 
   def caveats
     <<~EOS
       To load #{name} shared variables, add the following to your .zshrc:
         source "#{opt_pkgshare}/init.zsh"
-      or
+      or run
         #{opt_pkgshare}/install.zsh
     EOS
   end
