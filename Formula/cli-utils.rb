@@ -13,19 +13,35 @@ class CliUtils < Formula
 
   def install
     prefix.install_metafiles
-    pkgshare.install Dir["src/private/*"]
-    pkgshare.install Dir["src/public/*"]
-    
-    inreplace "src/init.sh", "__OPT_PKGSHARE__", opt_pkgshare
-    bin.install "src/init.sh" => name
+    zsh_function.install Dir["src/private/*"]
+    zsh_function.install Dir["src/public/*"]
+
+    pkgshare.install "src/init.zsh"
+
+    # inreplace("src/install.zsh", "__INIT_PATH__", "#{opt_pkgshare}/init.zsh")
+  end
+
+  def post_install
+    dotfile = Pathname.new(Dir.home) / ".zshrc"
+    source_line = %Q(source "#{opt_pkgshare}/init.zsh")
+
+    return unless dotfile.exist?
+
+    return if dotfile.read.include?(source_line)
+
+    dotfile.open("a") do |f|
+      f.puts ""
+      f.puts "# #{full_name}"
+      f.puts source_line
+    end
+
+    ohai "Added #{name} to #{dotfile}. Restart your shell or run: `source #{zshrc}`"
   end
 
   def caveats
     <<~EOS
-      cli-utils installed! To make Add this to your .zshrc:
-
-        source $(which cli-utils)
-
+      To load #{name} shared variables, add the following to your .zshrc:
+        source "#{opt_pkgshare}/cli-utils-init"
     EOS
   end
 

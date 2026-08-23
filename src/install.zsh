@@ -1,0 +1,90 @@
+#!/usr/bin/env zsh
+# Must be sourced (not executed) from an interactive zsh, e.g. in .zshrc:
+#   source "/path/to/init.sh"
+
+if [[ -z ${ZSH_VERSION-} ]]; then
+	command printf "${0:t}: expect zsh shell\n" >&2
+	exit 1
+fi
+
+_is_sourced() {
+	for ctx in ${zsh_eval_context}; do
+		if [[ "${ctx}" == "file" ]]; then return 0; fi
+	done
+	return 1
+}
+
+_update_line() {
+	local \
+		line="${1}" \
+		file="${2}" \
+		pat="${3}" \
+		matched=""
+
+	if [[ -f ${file} ]]; then
+		if [[ -n ${pat} ]]; then
+			matched=$(command grep -nF "${pat}" ${file})
+		else
+			matched=$(command grep -nF "${line#"${line%%[![:space:]]*}"}")
+		fi
+	fi
+
+	if [[ -n ${matched} ]]; then
+		command printf "Line already in %s:\n" "${file:t}"
+		command sed 's/^  → /' <<<"${matched}"
+		return
+	fi
+
+	if ! [[ -f ${file} && -w ${file} ]]; then
+		command printf "%s is not a writable file\n" "${file:t}" >&2
+		return 1
+	fi
+
+	[[ -n "$(command tail -n 1 ${file})" ]] && command printf "\n" >>"${file}"
+	while read -r src_line; do
+		builtin print "${src_line}" >>"${file}"
+	done <<<"${line}\n"
+
+	command printf "%s updated: %s lines added\n" "${file:t}" "$(wc -l <<<${line})"
+}
+
+_install() {
+	emulate -L zsh
+	set -u
+	local -r name="${1}"
+
+	if [[ -n "${ZDOTDIR}" ]]; then
+		dest="${ZDOTDIR:-~}/.zshrc"
+	else
+		dest="${HOME:-~}/.zshrc"
+	fi
+
+	if [[ ! -f ${dest} || ! -w ${dest} ]]; then
+		command printf "%s: %s is missing or unwritable" "${name}" "${dest:t}" >&2
+		return 1
+	fi
+
+	# local -r pattern="source \$(which ${name})"
+	local -r pattern="source \"__INIT_PATH__\""
+	local -r src=$(
+		cat <<EOS
+# benmoose/cli-utils
+which ${name} &>/dev/null && ${pattern}
+EOS
+	)
+
+	_update_line "${src}" "${dest}" "${pattern}"
+}
+
+{
+	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
+
+	if _is_sourced; then
+		command printf "fatal: %s is intended to be run interactively or by a script\n" "${0:t}" >&2
+		return 1
+	fi
+
+	_install "${0:t}" && command printf "Install complete\n"
+} always {
+	unset -f _install _update_line _is_sourced
+}
