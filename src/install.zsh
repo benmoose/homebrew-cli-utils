@@ -70,7 +70,7 @@ _install() {
 	fi
 
 	local -r \
-		pattern="source \"${prefix}/init.zsh\"" \
+		pattern="source \"${prefix}/init\"" \
 	src=$(
 		cat <<EOS
 # Autoload cli-utils functions
