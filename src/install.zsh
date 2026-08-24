@@ -9,7 +9,7 @@ _err() {
 		shift
 		false
 	)
-	command printf "$(\tput setaf 1)cli-utils: %s$(\tput sgr0)\n" \
+	command printf "$(\tput setaf 1)cli-utils: (install) %s$(\tput sgr0)\n" \
 		"$@" >&2
 }
 
@@ -57,37 +57,37 @@ _update_line() {
 _install() {
 	emulate -L zsh
 	set -u
-	local -r name="${1:t}" prefix="${HOMEBREW_PREFIX}/opt/cli-utils"
+	_err "demo err msg"
+	_err -x "demo err that returns (hopefully)"
 
-	command printf "0:%s\na:%s\nA:%s\n" "${1}" "${1:a}" "${1:A}"
+	local -r \
+		prefix="${HOMEBREW_PREFIX}/opt/cli-utils" \
+		dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 
-	local dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 	if [[ ! -f ${dotfile} || ! -w ${dotfile} ]]; then
 		_err "${dotfile:t} is missing or unwritable"
 		return 1
 	fi
 
 	local -r \
-		pattern="source \"${prefix}/init.zsh\""
+		pattern="source \"${prefix}/init.zsh\"" \
 	src=$(
 		cat <<EOS
 # Autoload cli-utils functions
 ${pattern}
 EOS
 	)
+
 	_update_line "${src}" "${dotfile}" "${pattern}"
 }
 
 {
-	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
-
 	if _is_sourced; then
 		_err "execute directly or via a script"
 		return 1
 	fi
 
-	_install "${0:a}" &&
-		source "$(brew --prefix cli-utils)/init"
+	_install
 } always {
 	unset -f  _update_line _is_sourced _err _install
 }
