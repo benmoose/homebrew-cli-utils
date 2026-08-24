@@ -30,7 +30,7 @@ _update_line() {
 
 	if [[ -n ${matched} ]]; then
 		command printf "%s contains matching line:\n" "${file:t}"
-		command sed 's/^    → /' <<<"${matched}"
+		command sed 's/^/└ /' <<<"${matched}"
 		return
 	fi
 
@@ -50,38 +50,37 @@ _update_line() {
 _install() {
 	emulate -L zsh
 	set -u
-	local -r init_path="${1:h}/init.zsh" name="${1:t}"
-	
-	command printf "0: %s\n" "${1}"
+	local -r name="${1}"
+	local dotfile
 
-	[[ -n "${ZDOTDIR-}" ]] && dest="${ZDOTDIR}/.zshrc" || dest="${HOME:-~}/.zshrc"
-
-	if [[ ! -f ${dest} || ! -w ${dest} ]]; then
-		command printf "%s: %s is missing or unwritable" "${name}" "${dest:t}" >&2
+	[[ -n "${ZDOTDIR-}" ]] && dotfile="${ZDOTDIR}/.zshrc" || dotfile="${HOME:-~}/.zshrc"
+	if [[ ! -f ${dotfile} || ! -w ${dotfile} ]]; then
+		command printf "%s: %s is missing or unwritable\n" "${name}" "${dotfile:t}" >&2
 		return 1
 	fi
 
-	local -r pattern="source \"${init_path}\""
-	local -r src=$(
-		cat <<EOS
-# Load cli-utils
+	local -r \
+		pattern="source \"${HOMEBREW_PREFIX}/init\""
+		src=$(
+			cat <<EOS
+# cli-utils
 ${pattern}
 EOS
 	)
 
-	_update_line "${src}" "${dest}" "${pattern}"
+	_update_line "${src}" "${dotfile}" "${pattern}"
 }
 
 {
 	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
 
 	if _is_sourced; then
-		command printf "%s: should be executed interactively or by a script\n" "${0:t}" >&2
+		command printf "%s: execute directly or via a script\n" "${0:t}" >&2
 		return 1
 	fi
 
-	_install "${0:a}" &&
-		source "${0:a:h}/init.zsh"
+	_install "${0:t}" &&
+		source "$(brew --prefix cli-utils)/init"
 } always {
-	unset -f _install _update_line _is_sourced
+	unset -f  _update_line _is_sourced _install
 }

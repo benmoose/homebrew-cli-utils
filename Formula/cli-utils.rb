@@ -13,22 +13,23 @@ class CliUtils < Formula
 
   def install
     prefix.install_metafiles
-    
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
-    
-    inreplace "src/init.zsh", "__FN_DIR__", zsh_function
-    libexec.install Dir["src/*.zsh"]
 
+    pkgshare.install "src/init.sh"
+    prefix.install_symlink pkgshare/"init.zsh"
+
+    libexec.install "src/install.zsh"
     bin.install_symlink libexec/"install.zsh" => "#{name}-install"
   end
 
   def caveats
+    source_path=(opt_pkgshare/"init.zsh").relative_path_from(opt_prefix)
+
     <<~EOS
-      To load #{name} shared variables, run:
-        #{name}-install
-      which adds the following to your .zshrc:
-        source "#{opt_pkgshare}/init.zsh"
+    To autoload #{name} functions, add the following to your .zshrc:
+      source #{name}-init
+    or run \`install-#{name}\` to install automatically
     EOS
   end
 

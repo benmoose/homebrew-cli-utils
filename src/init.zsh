@@ -16,11 +16,12 @@ _is_sourced() {
 _init() {
 	emulate -L zsh
 	set -u
-	local -r fn_dir="${1:a}"
 
-	if ! [[ -d "${fn_dir}" ]]; then
+	local -r func_dir="${1:a}/share/zsh/site-functions"
+	if ! [[ -d "${func_dir}" ]]; then
 		command printf \
-			"fatal: installed functions not found, expect directory at %s. Try running \"brew reinstall cli-utils\"\n" "${fn_dir}" >&2
+			"fatal: installed functions not found, expect directory at %s. Try running \"brew reinstall cli-utils\"\n" \
+			"${func_dir}" >&2
 		return 1
 	fi
 
@@ -31,12 +32,12 @@ _init() {
 		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
 	fi
 
-	builtin autoload -Uz ${fn_dir}/*(:t)
+	builtin autoload -Uz ${func_dir}/*(:t)
 }
 
 {
 	_is_sourced &&
-		_init "__FN_DIR__"
+		_init "${HOMEBREW_PREFIX}/opt/cli-utils"
 } always {
 	unset -f _is_sourced _init
 }
