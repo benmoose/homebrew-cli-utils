@@ -14,7 +14,7 @@ local -r \
 	curr_b="$(git symbolic-ref -q --short HEAD)"
 
 if [[ "${head_obj}" != "${upstream_obj}" ]]; then
-	[[ "${1}" != "-q" ]] && _err "${0}: not in sync with branch at remote"	
+	[[ "${1}" != "-q" ]] && _err "${0}: not in sync with branch at remote"
 	return 1
 fi
 

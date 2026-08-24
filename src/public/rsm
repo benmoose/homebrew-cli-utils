@@ -15,7 +15,8 @@ setopt no_monitor
 
 () {
 	git fetch -q --no-auto-gc --no-tags && git reset -q --hard "origin/${main_b}"
-} & local -r pid="${!}"
+} &
+local -r pid="${!}"
 
 trap 'kill "${pid}"; return 130'
 
