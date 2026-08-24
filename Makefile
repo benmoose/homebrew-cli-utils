@@ -2,7 +2,11 @@ default: help
 
 .PHONY: fmt
 fmt: ## Format shell scripts and functions
-	shfmt -ln zsh -w src/**/*
+	@shfmt -w src/**/*
+
+.PHONY: fmt-check
+fmt-check: ## Print a list of unformatted files
+	@shfmt -l src/**/*
 
 .PHONY: help
 help:  ## Print this help message

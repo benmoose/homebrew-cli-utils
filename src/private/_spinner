@@ -6,9 +6,8 @@ builtin emulate -L zsh
 
 local -r pid_arg="${1}" msg_arg="${2}" style_arg="${3:-${CYAN}}"
 local -i i
-local -ar \
-	spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆') \
-	frames=(${(ws::)spinners[(($RANDOM%${#spinners[@]} + 1))]})
+local -ar spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆')
+local -ar frames=(${(ws::)spinners[(($RANDOM%${#spinners[@]} + 1))]})
 
 while kill -0 "${pid_arg}" &> /dev/null; do
 	printf "${CR}%s${NS}%s %s " "${style_arg}" "${frames[((i % ${#frames[@]} + 1))]}" "${msg_arg}"
