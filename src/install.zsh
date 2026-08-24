@@ -35,11 +35,9 @@ _append_file() {
 	if [[ -n ${matched} ]]; then
 		local -i width=$(wc -l <${file} | tr -d ' ' | wc -c)
 		command printf "%s already configured:\n" "${file:t}"
-		command printf "$(\tput setaf 3)$(\tput bold)"
 		command awk \
 			-v w="${width}" \
 			-F: '/^[0-9]+:/ {printf "╰─ %-*d: %s\n", w-1, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
-		command printf "$(\tput setaf 0)No changes to %s needed.$(\tput sgr0)\n" "${file:t}"
 		return
 	fi
 
@@ -85,6 +83,7 @@ EOS
 	fi
 
 	_install "$(brew --prefix cli-utils)"
+		&& command printf "Install complete."
 } always {
 	unset -f  _append_file _is_sourced _err _install
 }
