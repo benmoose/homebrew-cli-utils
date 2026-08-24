@@ -23,6 +23,7 @@ _append_file() {
 		pat="${3}" \
 		matched=""
 
+	local -r line_count="$(cat ${file} | wc -l | wc -c)"
 	if [[ -f ${file} ]]; then
 		if [[ -n ${pat} ]]; then
 			matched=$(command grep -nF "${pat}" ${file})
@@ -32,8 +33,11 @@ _append_file() {
 	fi
 
 	if [[ -n ${matched} ]]; then
+		local -i width=$(wc -l < ${file} | tr -d ' ' | wc -c)
 		command printf "$(\tput bold)%s contains matching line:$(\tput sgr0)\n" "${file:t}"
-		command sed 's/^/└ /' <<<"${matched}"
+		command awk \
+			-v w="${width}" \
+			-F: '/^[0-9]+:/ {printf "╰─ %-*d %s\n", w-1, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
 		command printf "No changes made.\n"
 		return
 	fi
