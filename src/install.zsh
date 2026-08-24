@@ -1,10 +1,17 @@
 #!/usr/bin/env zsh
-# Must be executed (not sourced) from an interactive zsh, e.g. in .zshrc
-
 if [[ -z ${ZSH_VERSION-} ]]; then
 	command printf "${0:t}: expect zsh shell\n" >&2
 	exit 1
 fi
+
+_err() {
+	[[ "${1}" == "-x" ]] && (
+		shift
+		false
+	)
+	command printf "$(\tput setaf 1)cli-utils: %s$(\tput sgr0)\n" \
+		"$@" >&2
+}
 
 _is_sourced() {
 	for ctx in ${zsh_eval_context}; do
@@ -35,7 +42,7 @@ _update_line() {
 	fi
 
 	if ! [[ -f ${file} && -w ${file} ]]; then
-		command printf "%s is not a writable file\n" "${file:t}" >&2
+		_err "${file:t} is not a writable file"
 		return 1
 	fi
 
@@ -44,7 +51,7 @@ _update_line() {
 		builtin print "${src_line}" >>"${file}"
 	done <<<"${line}\n"
 
-	command printf "%s updated: %s lines added\n" "${file:t}" "$(wc -l <<<${line})"
+	command printf "%s updated, added %s lines\n" "${file:t}" "$(wc -l <<<${line})"
 }
 
 _install() {
@@ -52,19 +59,19 @@ _install() {
 	set -u
 	local -r name="${1:t}" prefix="${HOMEBREW_PREFIX}/opt/cli-utils"
 
-	command printf "0:%s\na:%s\nA:%s\n" "${0}" "${0:a}" "${0:A}"
+	command printf "0:%s\na:%s\nA:%s\n" "${1}" "${1:a}" "${1:A}"
 
 	local dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 	if [[ ! -f ${dotfile} || ! -w ${dotfile} ]]; then
-		command printf "%s: %s is missing or unwritable\n" "${name}" "${dotfile:t}" >&2
+		_err "${dotfile:t} is missing or unwritable"
 		return 1
 	fi
 
 	local -r \
 		pattern="source \"${prefix}/init.zsh\""
-		src=$(
-			cat <<EOS
-# cli-utils
+	src=$(
+		cat <<EOS
+# Autoload cli-utils functions
 ${pattern}
 EOS
 	)
@@ -75,12 +82,12 @@ EOS
 	0="${ZERO:-${${0:#${ZSH_ARGZERO}}:-${(%):-%N}}}"
 
 	if _is_sourced; then
-		command printf "%s: execute directly or via a script\n" "${0:t}" >&2
+		_err "execute directly or via a script"
 		return 1
 	fi
 
 	_install "${0:a}" &&
 		source "$(brew --prefix cli-utils)/init"
 } always {
-	unset -f  _update_line _is_sourced _install
+	unset -f  _update_line _is_sourced _err _install
 }
