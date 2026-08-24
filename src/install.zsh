@@ -16,7 +16,7 @@ _is_sourced() {
 	return 1
 }
 
-_update_line() {
+_append_file() {
 	local \
 		line="${1}" \
 		file="${2}" \
@@ -54,25 +54,22 @@ _install() {
 	emulate -L zsh
 	set -u
 
-	local -r \
-		prefix="${HOMEBREW_PREFIX}/opt/cli-utils" \
-		dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
-
+	local -r dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 	if [[ ! -f ${dotfile} || ! -w ${dotfile} ]]; then
 		_err "${dotfile:t} is missing or unwritable"
 		return 1
 	fi
 
 	local -r \
-		pattern="source \"${prefix}/init\"" \
+		pattern="source ${1}/init" \
 		src=$(
 			cat <<EOS
-# Autoload cli-utils functions
-${pattern}
+# Load ${1:t} (v ${1:A:t})
+${pattern} "${1:a}"
 EOS
-		)
+	)
 
-	_update_line "${src}" "${dotfile}" "${pattern}"
+	_append_file "${src}" "${dotfile}" "${pattern}"
 }
 
 {
@@ -81,7 +78,7 @@ EOS
 		return 1
 	fi
 
-	_install
+	_install "$(brew --prefix cli-utils)"
 } always {
-	unset -f  _update_line _is_sourced _err _install
+	unset -f  _append_file _is_sourced _err _install
 }
