@@ -32,8 +32,9 @@ _append_file() {
 	fi
 
 	if [[ -n ${matched} ]]; then
-		command printf "%s contains matching line:\n" "${file:t}"
+		command printf "$(\tput bold)%s contains matching line:$(\tput sgr0)\n" "${file:t}"
 		command sed 's/^/└ /' <<<"${matched}"
+		command printf "No changes made.\n"
 		return
 	fi
 

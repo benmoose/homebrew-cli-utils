@@ -1,8 +1,13 @@
-# Benmoose Cli-utils
+# CLI Utils
 
-## How do I install these formulae?
+## Quickstart
 
-`brew install benmoose/cli-utils/cli-utils`
+Homebrew installation:
+
+```sh
+brew install benmoose/cli-utils/cli-utils
+install-cli-utils
+```
 
 Or `brew tap benmoose/cli-utils` and then `brew install cli-utils`.
 

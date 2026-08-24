@@ -7,14 +7,13 @@ if ! which gh &>/dev/null; then
 	return 127
 fi
 
-setopt nomonitor
-
 local -r branch_arg="${1:-$(_git_current_branch)}"
 
+setopt no_monitor
 gh repo view --branch "${branch_arg}" --web >/dev/null &
 local -r pid="${!}"
 trap 'kill "${pid}"; return 130' INT TERM
 
 _spinner "${pid}" "Opening repository..."
 
-if wait "${pid}" 2>/dev/null; then printf "%s" "${CR}${EL}"; fi
+if builtin wait "${pid}" 2>/dev/null; then printf "%s" "${CR}${EL}Opened repository\n"; fi
