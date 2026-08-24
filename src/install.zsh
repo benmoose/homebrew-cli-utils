@@ -54,16 +54,16 @@ _install() {
 	emulate -L zsh
 	set -u
 
-	local -r dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
+	local -r \
+		pattern="source ${1}/init"
+	dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 	if [[ ! -f ${dotfile} || ! -w ${dotfile} ]]; then
 		_err "${dotfile:t} is missing or unwritable"
 		return 1
 	fi
 
-	local -r \
-		pattern="source ${1}/init" \
-		src=$(
-			cat <<EOS
+	local -r src=$(
+		cat <<EOS
 # Load ${1:t} (v ${1:A:t})
 ${pattern} "${1:a}"
 EOS
