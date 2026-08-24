@@ -5,11 +5,7 @@ if [[ -z ${ZSH_VERSION-} ]]; then
 fi
 
 _err() {
-	[[ "${1}" == "-x" ]] && (
-		shift
-		false
-	)
-	command printf "$(\tput setaf 1)cli-utils: (install) %s$(\tput sgr0)\n" \
+	command printf "$(\tput setaf 1)cli-utils (install): %s$(\tput sgr0)\n" \
 		"$@" >&2
 }
 
@@ -57,8 +53,6 @@ _update_line() {
 _install() {
 	emulate -L zsh
 	set -u
-	_err "demo err msg"
-	_err -x "demo err that returns (hopefully)"
 
 	local -r \
 		prefix="${HOMEBREW_PREFIX}/opt/cli-utils" \
@@ -71,12 +65,12 @@ _install() {
 
 	local -r \
 		pattern="source \"${prefix}/init\"" \
-	src=$(
-		cat <<EOS
+		src=$(
+			cat <<EOS
 # Autoload cli-utils functions
 ${pattern}
 EOS
-	)
+		)
 
 	_update_line "${src}" "${dotfile}" "${pattern}"
 }
