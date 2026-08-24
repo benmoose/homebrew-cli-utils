@@ -82,8 +82,8 @@ EOS
 		return 1
 	fi
 
-	_install "$(brew --prefix cli-utils)"
-		&& command printf "Install complete."
+	_install "$(brew --prefix cli-utils)" &&
+		command printf "Install complete."
 } always {
 	unset -f  _append_file _is_sourced _err _install
 }
