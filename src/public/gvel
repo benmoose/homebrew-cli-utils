@@ -2,8 +2,12 @@
 # See https://piechowski.io/post/git-commands-before-reading-code
 
 builtin emulate -L zsh
+set -o pipefail
 
 if ! _git_repo; then return 1; fi
 
-git log --date=format:'%Y-%m' --format='%ad' -- \
-	| sort --reverse | uniq --count
+printf "${DIM}%7s ${CYAN}%s${NS}\n" "month" "commit #"
+git log --date=format:'%Y-%m' --format='%ad' | \
+	uniq --count | sort --reverse | \
+	awk -v b="${BOLD}" -v c="${CYAN}" -v n="${NS}" \
+		'{printf "%7s %s%s%s\n", $2, c, $1, n}'
