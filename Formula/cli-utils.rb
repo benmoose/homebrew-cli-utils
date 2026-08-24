@@ -1,8 +1,8 @@
 class CliUtils < Formula
   desc "Collection of useful Zsh CLI functions"
   homepage "https://github.com/benmoose/homebrew-cli-utils"
-  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.72.tar.gz"
-  sha256 "0722af0f0900bdda24b32bd4ed59fb3fbde4cb07b142da536d2e4cb2755681e2"
+  url "https://github.com/benmoose/homebrew-cli-utils/archive/refs/tags/v0.0.73.tar.gz"
+  sha256 "8dc07d100a6a85311d8c683bb5e44d200d6fca5140f45a47893ee14ea6936eef"
   license "GPL-3.0-or-later"
   head "https://github.com/benmoose/homebrew-cli-utils.git", branch: "main"
 
@@ -16,7 +16,7 @@ class CliUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
-    pkgshare.install "src/init.sh"
+    pkgshare.install "src/init.zsh"
     prefix.install_symlink pkgshare/"init.zsh"
 
     libexec.install "src/install.zsh"
