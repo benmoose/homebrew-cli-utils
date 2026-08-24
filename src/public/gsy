@@ -8,14 +8,14 @@ if ! _git_repo; then return 1; fi
 git fetch --no-auto-gc --no-tags --quiet origin || return $?
 
 local -r \
-	opt_arg="${1:+1}" \
 	head_obj="$(git rev-parse --short --verify -q HEAD)" \
-	upstream_obj="$(git rev-parse --short --verify -q HEAD@{upstream})" \
-	curr_b="$(git symbolic-ref -q --short HEAD)"
+	upstream_obj="$(git rev-parse --short --verify -q HEAD@{upstream})"
 
 if [[ "${head_obj}" != "${upstream_obj}" ]]; then
-	[[ "${1}" != "-q" ]] && _err "${0}: not in sync with branch at remote"
+	[[ "${1}" != "-q" ]] && _err "✕ upstream diverges (${upstream_obj})"
 	return 1
 fi
 
-[[ "${1}" != "-q" ]] && printf "%s: in sync with branch at remote\n" "${0}"
+[[ "${1}" != "-q" ]] && printf "Up to date\n"
+
+return 0
