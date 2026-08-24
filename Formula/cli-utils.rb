@@ -17,23 +17,29 @@ class CliUtils < Formula
     zsh_function.install Dir["src/public/*"]
 
     pkgshare.install "src/init.zsh"
-    prefix.install_symlink pkgshare/"init.zsh"
+    prefix.install_symlink pkgshare/"init.zsh" => "init"
 
     libexec.install "src/install.zsh"
-    bin.install_symlink libexec/"install.zsh" => "#{name}-install"
+    bin.install_symlink libexec/"install.zsh" => installer_name
   end
 
   def caveats
-    source_path=(opt_pkgshare/"init.zsh").relative_path_from(opt_prefix)
-
     <<~EOS
-    To autoload #{name} functions, add the following to your .zshrc:
-      source #{name}-init
-    or run \`install-#{name}\` to install automatically
+      To autoload #{name} functions, add the following to your .zshrc:
+
+        source #{opt_prefix}/init
+
+      or run \`#{installer_name}\` to configure .zshrc automatically.
     EOS
   end
 
   test do
     expect(formula.pkgshare).to be_a_directory
+  end
+
+  private
+
+  def installer_name
+    "install-#{name}"
   end
 end

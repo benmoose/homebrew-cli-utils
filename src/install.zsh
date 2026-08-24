@@ -50,24 +50,24 @@ _update_line() {
 _install() {
 	emulate -L zsh
 	set -u
-	local -r name="${1}"
-	local dotfile
+	local -r name="${1:t}" prefix="${HOMEBREW_PREFIX}/opt/cli-utils"
 
-	[[ -n "${ZDOTDIR-}" ]] && dotfile="${ZDOTDIR}/.zshrc" || dotfile="${HOME:-~}/.zshrc"
+	command printf "0:%s\na:%s\nA:%s\n" "${0}" "${0:a}" "${0:A}"
+
+	local dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 	if [[ ! -f ${dotfile} || ! -w ${dotfile} ]]; then
 		command printf "%s: %s is missing or unwritable\n" "${name}" "${dotfile:t}" >&2
 		return 1
 	fi
 
 	local -r \
-		pattern="source \"${HOMEBREW_PREFIX}/init\""
+		pattern="source \"${prefix}/init.zsh\""
 		src=$(
 			cat <<EOS
 # cli-utils
 ${pattern}
 EOS
 	)
-
 	_update_line "${src}" "${dotfile}" "${pattern}"
 }
 
@@ -79,7 +79,7 @@ EOS
 		return 1
 	fi
 
-	_install "${0:t}" &&
+	_install "${0:a}" &&
 		source "$(brew --prefix cli-utils)/init"
 } always {
 	unset -f  _update_line _is_sourced _install
