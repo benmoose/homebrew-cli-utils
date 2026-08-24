@@ -34,10 +34,11 @@ _append_file() {
 
 	if [[ -n ${matched} ]]; then
 		local -i width=$(wc -l <${file} | tr -d ' ' | wc -c)
-		command printf "%s already configured:\n" "${file:t}"
+		command printf "Found similar lines already in %s:\n" "${file:t}"
 		command awk \
 			-v w="${width}" \
 			-F: '/^[0-9]+:/ {printf "╰─ %-*d: %s\n", w-1, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
+		command printf "$(\tput bold)%s already configured, no changes needed.$(\tput sgr0)\n" "${file:t}"
 		return
 	fi
 
@@ -82,8 +83,7 @@ EOS
 		return 1
 	fi
 
-	_install "$(brew --prefix cli-utils)" &&
-		command printf "Install complete."
+	_install "$(brew --prefix cli-utils)"
 } always {
 	unset -f  _append_file _is_sourced _err _install
 }
