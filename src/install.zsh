@@ -53,7 +53,7 @@ _append_file() {
 		builtin print "${src_line}" >>"${file}"
 	done <<<"${line}\n"
 
-	command printf "%s updated, added %s lines\n" "${file:t}" "$(wc -l <<<${line} | tr -d ' ')"
+	command printf "%s updated, added %s lines\n" "${file:t}" "$(wc -l <<<${line})"
 }
 
 _install() {
