@@ -30,15 +30,16 @@ _append_file() {
 		else
 			matched=$(command grep -nF "${line#"${line%%[![:space:]]*}"}")
 		fi
-	fi
+	fiz
 
+	local BOLD=$(tput bold) DIM=$(tput dim) NS=$(tput sgr0)
 	if [[ -n ${matched} ]]; then
 		local -i width=$(wc -l <${file} | tr -d ' ' | wc -c)
-		command printf "Found similar lines already in %s:\n" "${file:t}"
+		command printf "${DIM}╭╴${NS}${BOLD}%s already configured for cli-utils:${DIM}\n" "${BOLD}" "${file:t}"
 		command awk \
-			-v w="${width}" \
-			-F: '/^[0-9]+:/ {printf "╰─ %-*d: %s\n", w-1, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
-		command printf "$(\tput bold)%s already configured, no changes needed.$(\tput sgr0)\n" "${file:t}"
+			-v w="${width}" -v d="${DIM}" -v n="${NS}" \
+			-F: '/^[0-9]+:/ {printf "%s╰╴%-*d:%s\n", d, w, n, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
+		command printf "%s ready, no changes\n" "${file:t}"
 		return
 	fi
 
@@ -52,7 +53,7 @@ _append_file() {
 		builtin print "${src_line}" >>"${file}"
 	done <<<"${line}\n"
 
-	command printf "%s updated, added %s lines\n" "${file:t}" "$(wc -l <<<${line})"
+	command printf "%s updated, added %s lines\n" "${file:t}" "$(wc -l <<<${line} | tr -d ' ')"
 }
 
 _install() {
