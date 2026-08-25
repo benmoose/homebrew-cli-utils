@@ -24,7 +24,7 @@ _init() {
 	fi
 
 	export -TU FPATH fpath
-	if [[ -z ${fpath[(r)${func_dir}]} ]]; then
+	if [[ -z ${fpath[(r)$func_dir]} ]]; then
 		fpath+=("${func_dir}")
 	fi
 
