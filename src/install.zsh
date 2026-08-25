@@ -38,7 +38,7 @@ _append_file() {
 		command printf "${DIM}╭╴${NS}${BOLD}%s already configured for cli-utils:${DIM}\n" "${BOLD}" "${file:t}"
 		command awk \
 			-v w="${width}" -v d="${DIM}" -v n="${NS}" \
-			-F: '/^[0-9]+:/ {printf "%s╰╴%-*d:%s\n", d, w, n, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
+			-F: '/^[0-9]+:/ {printf "%s╰╴%-*d:%s%s\n", d, w, n, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
 		command printf "%s ready, no changes\n" "${file:t}"
 		return
 	fi
