@@ -23,6 +23,11 @@ _init() {
 		return 1
 	fi
 
+	export -TU FPATH fpath
+	if [[ -z ${fpath[(r)${func_dir}]} ]]; then
+		fpath+=("${func_dir}")
+	fi
+
 	if [[ "$(env | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|NS' -wc)" != "10" ]]; then
 		declare -grx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
 		MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) \
@@ -30,7 +35,7 @@ _init() {
 		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
 	fi
 
-	builtin autoload -Uz ${func_dir:a}/*(:t)
+	builtin autoload -Uz -- ${func_dir:a}/*(:t)
 }
 
 {
