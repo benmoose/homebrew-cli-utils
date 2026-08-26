@@ -1,12 +1,13 @@
+SHELL := /usr/bin/env zsh
 default: help
 
 .PHONY: fmt
-fmt: ## Format shell scripts and functions
-	@zsh-lint src/**/*
+fmt: install ## Check format of zsh scripts and functions
+	@zsh-lint ./src/*.zsh ./src/public/* ./src/private/*
 
-.PHONY: fmt-check
-fmt-check: ## Print a list of unformatted files
-	@shfmt -l src/**/*
+.PHONY: install
+install:
+	@go install github.com/z-shell/zsh-lint/cmd/zsh-lint@latest
 
 .PHONY: help
 help:  ## Print this help message

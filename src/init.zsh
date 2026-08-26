@@ -1,15 +1,13 @@
 #!/usr/bin/env zsh
+
 0="${(%):-%N}"
+
 if [[ -z ${ZSH_VERSION-} ]]; then
-	command printf "${0:t}: expect zsh shell\n" >&2
-	false
+	command printf "${0:t}: expect zsh shell\n" >&2; return 1
 fi
 
 _is_sourced() {
-	for ctx in ${zsh_eval_context}; do
-		if [[ "${ctx}" == "file" ]]; then return 0; fi
-	done
-	return 1
+	[[ "$zsh_eval_context" == *file* ]]
 }
 
 _init() {
@@ -24,10 +22,10 @@ _init() {
 	echo "> func_dir=$func_dir"
 	echo "> pkgshare=$pkgshare"
 
-	if ! [[ -d "${func_dir}" ]]; then
+	if ! [[ -d "$func_dir" ]]; then
 		command printf \
 			"fatal: installed functions not found, expect directory at %s. Try running \"brew reinstall cli-utils\"\n" \
-			"${func_dir}" >&2
+			"$func_dir" >&2
 		return 1
 	fi
 
@@ -42,15 +40,15 @@ _init() {
 	# 	set +a
 	# fi
 
-	builtin autoload -Uz ${func_dir:a}/*(:t)
+	builtin autoload -Uz "${func_dir:a}"/*(:t)
 }
 
 {
-	prefix="$(brew --prefix cli-utils)"
+	_is_sourced || return 1
 
-	_is_sourced &&
-		source "${prefix}/share/cli-utils/init-env.zsh" && \
-		PREFIX=$prefix _init "${1:-$prefix}"
+	prefix="$(brew --prefix cli-utils)"
+	source "$prefix/share/cli-utils/init-env.zsh"
+	PREFIX="$prefix" _init
 } always {
 	unset -f _is_sourced _init
 }

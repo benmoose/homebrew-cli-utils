@@ -2,7 +2,7 @@
 root = true
 
 [*]
-end_of_line               = lf
+charset                   = utf-8
 indent_size               = 2
 indent_style              = space
 insert_final_newline      = true
@@ -12,11 +12,14 @@ trim_trailing_whitespace  = true
 indent_size   = 4
 indent_style  = tab
 
-[src/**/*]
-indent_size         = 4
-indent_style        = tab
-shell_variant       = zsh
-switch_case_indent  = true
+[src/*.{sh,zsh}]
+end_of_line = lf
+
+[src/{public,private}/*]
+indent_size   = 4
+indent_style  = tab
+shell_variant = zsh
+end_of_line   = lf
 
 [*.rb]
 indent_size = 4
