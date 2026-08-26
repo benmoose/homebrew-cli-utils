@@ -5,5 +5,4 @@ builtin emulate -L zsh
 
 if ! _git_repo; return 1; fi
 
-git log --date=format:'%Y-%m' --format='%ad' -- \
-	| sort --reverse | uniq --count
+git log --date=format:'%Y-%m' --format='%ad' | sort --reverse | uniq --count

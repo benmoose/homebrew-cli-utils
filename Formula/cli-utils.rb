@@ -25,8 +25,7 @@ class CliUtils < Formula
 
   def caveats
     <<~EOS
-      To autoload #{name} functions, add the following to your .zshrc:
-
+      To autoload functions, add this to your profile:
         source #{opt_prefix}/init
 
       or run \`#{installer_name}\` to configure .zshrc automatically.

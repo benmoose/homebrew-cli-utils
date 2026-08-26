@@ -32,14 +32,13 @@ _append_file() {
 		fi
 	fiz
 
-	local BOLD=$(tput bold) DIM=$(tput dim) NS=$(tput sgr0)
+	local -r BOLD=$(builtin tput bold) DIM=$(tput dim) NS=$(tput sgr0)
 	if [[ -n ${matched} ]]; then
 		local -i width=$(wc -l <${file} | tr -d ' ' | wc -c)
-		command printf "${DIM}╭╴${NS}${BOLD}%s already configured for cli-utils:${DIM}\n" "${BOLD}" "${file:t}"
+		command printf "${DIM}╭╴${NS}${BOLD}%s already configured for cli-utils:${DIM}\n" "${file:t}"
 		command awk \
 			-v w="${width}" -v d="${DIM}" -v n="${NS}" \
 			-F: '/^[0-9]+:/ {printf "%s╰╴%-*d:%s%s\n", d, w, n, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
-		command printf "%s ready, no changes\n" "${file:t}"
 		return
 	fi
 
