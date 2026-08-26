@@ -10,11 +10,12 @@ local -r \
 	style_arg="${3:-$CYAN}"
 
 local -ar spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆')
-local -ar frames=(${(ws::)spinners[(($RANDOM%${#spinners[@]} + 1))]})
-local -i i
+local -ir si=$((RANDOM%${#spinners[@]} + 1))
+local -ar frames=( ${(ws::)spinner[$si]} )
+local -i t
 
 while kill -0 "${pid_arg}" &> /dev/null; do
-	printf "${CR}%s%s${NS} %s " \
-		"${style_arg}" "${frames[((i++ % ${#frames[@]} + 1))]}" "${msg_arg}"
+	local -ir f=$((t++ % ${#frames[@]} + 1))
+	printf "${CR}%s%s${NS} %s " "${style_arg}" "${frames[$f]}" "${msg_arg}"
 	sleep 0.042
 done

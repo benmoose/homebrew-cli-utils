@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+0="${(%):-%N}"
 if [[ -z ${ZSH_VERSION-} ]]; then
 	command printf "${0:t}: expect zsh shell\n" >&2
 	false
@@ -14,7 +15,14 @@ _is_sourced() {
 _init() {
 	emulate -L zsh
 	set -u
-	local -r func_dir="${1}/share/zsh/site-functions"
+	local -r \
+		prefix="${1:=$PREFIX}" \
+		func_dir="$PREFIX/share/zsh/site-functions" \
+		pkgshare="$PREFIX/share/cli-utils"
+
+	echo "> prefix=$prefix"
+	echo "> func_dir=$func_dir"
+	echo "> pkgshare=$pkgshare"
 
 	if ! [[ -d "${func_dir}" ]]; then
 		command printf \
@@ -25,22 +33,24 @@ _init() {
 
 	export -TU FPATH fpath
 	if [[ -z ${fpath[(r)$func_dir]-} ]]; then
-		fpath+=("${func_dir}")
+		fpath+=( "${func_dir}" )
 	fi
 
-	if [[ "$(printenv | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|CIVIS|CNORM|NS' -wc)" != "12" ]]; then
-		declare -grx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
-		MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) \
-		BOLD=$(tput bold) DIM=$(tput dim) \
-		CR=$(tput cr) EL=$(tput el) CIVIS=$(tput civis) CNORM=$(tput cnorm) NS=$(tput sgr0)
-	fi
+	# if [[ "$(printenv | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|CIVIS|CNORM|NS' -wc)" != "12" ]]; then
+	# 	set -a
+	# 	source "${pkgshare}/init-env.zsh"
+	# 	set +a
+	# fi
 
-	builtin autoload -Uz -- ${func_dir:a}/*(:t)
+	builtin autoload -Uz ${func_dir:a}/*(:t)
 }
 
 {
+	prefix="$(brew --prefix cli-utils)"
+
 	_is_sourced &&
-		_init "${1:-"$(brew --prefix cli-utils)"}"
+		source "${prefix}/share/cli-utils/init-env.zsh" && \
+		PREFIX=$prefix _init "${1:-$prefix}"
 } always {
 	unset -f _is_sourced _init
 }

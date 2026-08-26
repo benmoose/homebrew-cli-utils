@@ -4,13 +4,14 @@
 
 builtin emulate -L zsh
 set -o pipefail
+0="${${(M)0:#/*}:-$PWD/$0}"
 
 if ! which uuidgen &>/dev/null; then
-	_err "$0: uuidgen not found"
+	_err "${0:t}: uuidgen not found"
 	return 1
 fi
 
-declare -r out=$(uuidgen | tr -d '\n')
+local -r out=$(uuidgen | tr -d '\n')
 
 if [[ "$1" != "-x" ]]; then
 	printf "${out:l}" | pbcopy

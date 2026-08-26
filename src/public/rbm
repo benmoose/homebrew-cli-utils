@@ -4,10 +4,11 @@ builtin emulate -L zsh
 
 if ! _git_repo; then return 1; fi
 
+0="${${(M)0:#/*}:-$PWD/$0}"
 local -r main_b="$(_git_main_branch)" curr_b="$(_git_current_branch)"
 
 if [[ "${main_b}" == "${curr_b}" ]]; then
-	_err "$0: not on a feature branch"
+	_err "${0:t}: not on a feature branch"
 	return 1
 fi
 
@@ -24,8 +25,8 @@ local -r msg="rebase onto origin/${main_b}..."
 _spinner "${pid}" "${msg}"
 
 if wait "${pid}" 2>/dev/null; then
-	printf "%s%s✓%s %s done\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
+	printf "${CR}${EL}${GREEN}✓${NS} %s done\n" "${msg}"
 else
-	printf "%s%s %s error\n" "${CR}${EL}" "${RED}×${NS}" "${msg}"
+	printf "${CR}${EL}${RED}×${NS} %s error\n" "${msg}"
 	return 1
 fi

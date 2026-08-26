@@ -2,7 +2,7 @@ builtin emulate -L zsh
 
 if ! _git_repo; then return 1; fi
 
-declare ref remote
+local ref remote
 for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
 	if git show-ref --verify --quiet "${ref}"; then
 		echo "${ref:t}"
@@ -11,7 +11,7 @@ for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,s
 done
 
 for remote in origin upstream; do
-	ref="$(git rev-parse --abbrev-ref --quiet ${remote}/HEAD)"
+	ref=$(git rev-parse --abbrev-ref --quiet "${remote}/HEAD")
 	if [[ "${ref}" == ${remote}/* ]]; then
 		echo "${ref#${remote}/}"
 		return 0

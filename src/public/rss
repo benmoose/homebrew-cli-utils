@@ -3,8 +3,10 @@
 builtin emulate -L zsh
 
 if ! _git_repo; then return 1; fi
+
+0="${${(M)0:#/*}:-$PWD/$0}"
 if [[ "$(_git_current_branch)" != "staging" ]]; then
-	_err "$0: not on staging branch"
+	_err "${0:t}: not on staging branch"
 	return 1
 fi
 

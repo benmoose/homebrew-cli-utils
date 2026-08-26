@@ -3,13 +3,18 @@
 builtin emulate -L zsh
 
 if ! _git_repo; then return 1; fi
-if ! which gh &>/dev/null; then _err "$0: command gh not found"; return 127; fi
+
+0="${${(M)0:#/*}:-$PWD/$0}"
+if ! which gh &>/dev/null; then
+	_err "${0:t}: command gh not found"
+	return 127
+fi
+
+local -r \
+	msg="Open pull request..." \
+	_err=$(mktemp -q -t="${0:t}")
 
 setopt no_monitor
-
-local -r msg="Open pull request..." \
-	_err=$(mktemp -q -t="${0}")
-
 gh pr view --web 2> "${_err}" > /dev/null & local -r pid="${!}"
 trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
 trap 'rm -f "${_err}"' EXIT
@@ -18,9 +23,8 @@ _spinner "${pid}" "${msg}"
 
 if ! wait "${pid}" 2>/dev/null; then
 	printf "${CR}${EL}"
-	local -r _errmsg=$(<${_err})
-	_err "${0}: ${_errmsg:0:1:u}${_errmsg:1}"
+	_err "${0:t}: $(<${_err})"
 	return 1
 fi
 
-printf "${CR}${EL}%s %s done\n" "${BOLD}${GREEN}✓${NS}" "${msg}"
+printf "${CR}${EL}${BOLD}${GREEN}✓${NS} %s done\n" "${msg}"

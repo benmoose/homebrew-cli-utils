@@ -5,20 +5,21 @@ set -o pipefail
 
 if ! _git_repo; then return 1; fi
 
+0="${${(M)0:#/*}:-$PWD/$0}"
 local -r main_b="$(_git_main_branch)" curr_b="$(_git_current_branch)"
 
 if [[ -z "${curr_b}" || "${curr_b}" == "${main_b}" || "${curr_b}" == "staging" ]]; then
-	_err "$0: not on feature branch"
+	_err "${0:t}: not on feature branch"
 	return 1
 fi
 
 if ! git show-ref -q --exists --no-tags --no-head refs/remotes/origin/staging; then
-	_err "$0: no remote staging branch"
+	_err "${0:t}: no remote staging branch"
 	return 1
 fi
 
 local -r msg="Staging ${curr_b}..." \
-	_err=$(mktemp -q -t="${0}")
+	_err=$(mktemp -q -t="${0:t}")
 
 () {
 	git checkout -q staging && \
@@ -36,8 +37,7 @@ _spinner "${pid}" "${msg}"
 
 if ! wait "${pid}" 2>/dev/null; then
 	printf "${CR}${EL}"
-	local -r _errmsg=$(<${_err})
-	_err "${0}: ${_errmsg:0:1:u}${_errmsg:1}"
+	_err "${0:t}: $(<${_err})"
 	return 1
 fi
 
