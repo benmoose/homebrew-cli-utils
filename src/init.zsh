@@ -28,7 +28,7 @@ _init() {
 		fpath+=("${func_dir}")
 	fi
 
-	if [[ "$(export -p | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|CIVIS|CNORM|NS' -wc)" != "12" ]]; then
+	if [[ "$(printenv | egrep 'RED|GREEN|YELLOW|BLUE|CYAN|BOLD|DIM|CR|EL|CIVIS|CNORM|NS' -wc)" != "12" ]]; then
 		declare -grx RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) BLUE=$(tput setaf 4) \
 		MAGENTA=$(tput setaf 5) CYAN=$(tput setaf 6) \
 		BOLD=$(tput bold) DIM=$(tput dim) \
