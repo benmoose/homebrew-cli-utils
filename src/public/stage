@@ -18,8 +18,8 @@ if ! git show-ref -q --exists --no-tags --no-head refs/remotes/origin/staging; t
 	return 1
 fi
 
-local -r msg="Staging ${curr_b}..." \
-	_err=$(mktemp -q -t="${0:t}")
+local -r msg="Staging ${curr_b}..." _err=$(mktemp -q -t="${0:t}")
+setopt no_monitor
 
 () {
 	git checkout -q staging && \
@@ -33,7 +33,7 @@ local -r msg="Staging ${curr_b}..." \
 trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
 trap 'rm -f "${_err}"' EXIT
 
-_spinner "${pid}" "${msg}"
+_spinner "$pid" "$msg"
 
 if ! wait "${pid}" 2>/dev/null; then
 	printf "${CR}${EL}"
