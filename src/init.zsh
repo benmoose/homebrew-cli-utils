@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 emulate -L zsh
+0="${(%):-%N}"
 
 if [[ -z "$ZSH_VERSION" ]]; then
 	command printf "${0:t}: expect zsh shell\n" >&2
@@ -17,13 +18,13 @@ _init() {
 
 	export -TU FPATH fpath
 	[[ -n "${fpath[(r)$func_dir]-}" ]] || fpath+=( "${func_dir}" )
-	builtin autoload -Uz ${func_dir}/*
+	builtin autoload -Uz "$func_dir"/*(:t)
 	source "${1:h}/share/cli-utils/init-env.zsh"
 }
 
 {
-	[[ "${zsh_eval_context[-1]}" == "file" } ]] || return 1
-	_init ${(%):-%N}
+	[[ "${zsh_eval_context[-1]}" == "file" ]] || return 1
+	_init "$0"
 } always {
 	unset -f _init
 }

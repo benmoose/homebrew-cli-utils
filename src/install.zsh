@@ -73,5 +73,5 @@ EOS
 
 	_install "$0"
 } always {
-	unset -f  _append_file _err _install
+	unset -f  _err _append_file _install
 }
