@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
+emulate -L zsh
+0="${(%):-%N}"
 
-0="${${(M)0:#/*}:-$PWD/$0}"
-
-if [[ -z "${ZSH_VERSION-}" ]]; then
+if [[ -z ${ZSH_VERSION-} ]]; then
 	command printf "${0:t}: expect zsh shell\n" >&2
-	exit 1
+	return 1
 fi
 
 _err() {
@@ -12,34 +12,28 @@ _err() {
 		"$@" >&2
 }
 
-_is_sourced() {
-	[[ "$zsh_eval_context" == *file* ]]
-}
-
 _append_file() {
 	local \
-		line="$1" \
-		file="$2" \
-		pat="$3" \
+		line="$(</dev/stdin)" \
+		file="$1" \
+		pat="$2" \
 		matched=""
 
-	if [[ -f "$file" ]]; then
-		if [[ -n "$pat" ]]; then
-			matched=$(command grep -n "$pat" "$file")
+	if [[ -f ${file} ]]; then
+		if [[ -n ${pat} ]]; then
+			matched=$(command grep -nF "$pat" "$file")
 		else
 			matched=$(command grep -nF "${line#"${line%%[![:space:]]*}"}")
 		fi
 	fi
 
-	if [[ -n "$matched" ]]; then
-		local bold=$(\tput bold) blue=$(tput setaf 4) dim=$(\tput dim) ns=$(\tput sgr0)
-		local -i width=$(tail -n 1 <<<"$matched" | sed 's/:.*$//g' | wc -L)
-		command printf "${blue}${bold}✓${ns} ${blue}${bold}Found cli-utils in %s already:${ns}\n" "${file:t}"
-		command tail -n 10 <<<"$matched" | command awk \
-			-v w="$width" -v b="$bold" -v d="$dim" -v n="$ns" \
-			-F: '/^[0-9]+:/ {printf "%s╰╴%*d%s %s%s%s\n", d, w, $1, n, b, n, substr($0, index($0, ":") + 1); next} {print}'
-		command printf "${bold}No changes needed, done.${ns}\n"
-		return 0
+	local -r BOLD=$(builtin tput bold) DIM=$(tput dim) NS=$(tput sgr0)
+	if [[ -n ${matched} ]]; then
+		command printf "${DIM}╭╴${NS}${BOLD}%s already configured for cli-utils:${DIM}\n" "${file:t}"
+		command awk \
+			-v d="${DIM}" -v n="${NS}" -v w=$(wc -l <${file} | wc -c) \
+			-F: '/^[0-9]+:/ {printf "%s╰╴%-*d:%s%s\n", d, w, n, $1, substr($0, index($0, ":") + 1); next} {print}' <<<"${matched}"
+		return
 	fi
 
 	if ! [[ -f "$file" && -w "$file" ]]; then
@@ -47,47 +41,37 @@ _append_file() {
 		return 1
 	fi
 
-	if [[ -n $(command tail -n 1 "$file") ]]; then
-		builtin echo >>"$file"
-	fi
+	[[ -n $(command tail -n 1 "$file") ]] && command printf "\n" >>"$file"
+	while read -r l; do
+		builtin print "$l" >>"$file"
+	done <<<"$line\n"
 
-	while read -r src_line; do
-		builtin print "$src_line" >>"$file"
-	done <<< "$line\n"
-
-	command printf "%s updated, added %s lines\n" "${file:t}" "$(grep -c "" "$file")"
+	command printf "%s updated, added %s lines\n" "${file:t}" "$(wc -l <<<$line)"
 }
 
 _install() {
-	emulate -L zsh
-	set -u
-	source "$PREFIX/share/cli-utils/init-env.zsh"
 	local -r \
-		pattern="source $PREFIX/init" \
+		pattern="source \"$(brew --prefix cli-utils)/init.zsh\"" \
 		dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 
 	if [[ ! -f "$dotfile" || ! -w "$dotfile" ]]; then
-		_err "${dotfile:t} is missing or unwritable"
+		_err "${1:t}: ${dotfile:t} is missing or unwritable"
 		return 1
 	fi
 
-	local -r src=$(
-		cat <<EOS
-# Load ${PREFIX:t}
-${pattern} "${PREFIX:a}"
+	_append_file "$dotfile" "$pattern" <<EOS
+# Load ${1:t}
+$pattern
 EOS
-	)
-
-	_append_file "$src" "$dotfile" "$pattern"
 }
 
 {
-	if _is_sourced; then
-		_err "execute directly or via a script"
+	if [[ "${zsh_eval_context[-1]}" == "file" ]]; then
+		_err "${0:t}: execute directly or via a script"
 		return 1
 	fi
 
-	PREFIX="$(brew --prefix cli-utils)" _install
+	_install "$0"
 } always {
-	unset -f _err _is_sourced _append_file _install
+	unset -f  _append_file _err _install
 }
