@@ -14,13 +14,11 @@ class CliUtils < Formula
   def install
     prefix.install_metafiles
 
+    zsh_function.install Dir["functions/**/*.zsh"]
+
     pkgshare.install Dir["src/*"]
     prefix.install_symlink pkgshare/"init.zsh" => "init"
     bin.install_symlink pkgshare/"install.zsh" => installer_name
-
-    zsh_function.install Pathname.glob("functions/**/*.zsh").to_h do |path|
-        [path, path.basename.sub_ext("")]
-    end
   end
 
   def caveats
