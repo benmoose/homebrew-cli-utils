@@ -13,16 +13,14 @@ class CliUtils < Formula
 
   def install
     prefix.install_metafiles
-    zsh_function.install Dir["src/private/*"]
-    zsh_function.install Dir["src/public/*"]
 
-    pkgshare.install "src/spinners.txt"
-    pkgshare.install "src/init-env.zsh"
-    pkgshare.install "src/init.zsh"
+    pkgshare.install Dir["src/*"]
     prefix.install_symlink pkgshare/"init.zsh" => "init"
+    bin.install_symlink pkgshare/"install.zsh" => installer_name
 
-    libexec.install "src/install.zsh"
-    bin.install_symlink libexec/"install.zsh" => installer_name
+    zsh_function.install Pathname.glob("functions/**/*.zsh").to_h do |path|
+        [path, path.basename.sub_ext("")]
+    end
   end
 
   def caveats

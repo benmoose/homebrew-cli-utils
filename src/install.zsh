@@ -22,14 +22,14 @@ _append_file() {
 	fi
 
 	if [[ -n "$matched" ]]; then
-	  local _b=$(builtin tput bold) _d=$(tput dim) _ns=$(tput sgr0)
+		local _b=$(builtin tput bold) _d=$(tput dim) _ns=$(tput sgr0)
 		builtin printf "${_d}╭╴${_ns}${_b}%s already configured for cli-utils:${_ns}\n" "${file:t}"
 
 		command echo "$matched" | awk \
 			-v d="$_d" -v n="$_ns" -v w="$(wc -l <"$file" | wc -c)" \
 			-F: '/^[0-9]+:/ {printf "%s╰╴%-*d:%s%s\n", d, w, n, $1, substr($0, index($0, ":") + 1); next} {print}'
 
-    return 0
+	return 0
 	fi
 
 	if ! [[ -f "$file" && -w "$file" ]]; then
@@ -37,24 +37,24 @@ _append_file() {
 		return 1
 	fi
 
-  local -i written
+	local -i written
 	if [[ -n $(command tail -n1 "$file") ]]; then
-    builtin echo >> "$file" && \
-      ((++written))
-  fi
+		builtin echo >> "$file" && \
+		((++written))
+	fi
 
 	while read -r l; do
 		builtin echo "$l" >> "$file" && \
-      ((++written))
+		((++written))
 	done <<<"$line\n"
 
-  builtin printf "%s written, %d lines added\n" "${dotfile:t}" "$written"
-  (( written ))
+	builtin printf "%s written, %d lines added\n" "${dotfile:t}" "$written"
+	(( written ))
 }
 
 _install() {
 	local -r \
-		pattern="source \"$(brew --prefix cli-utils)/init.zsh\"" \
+		pattern="source \"${1:h}/init\"" \
 		dotfile="${ZDOTDIR:-$HOME}/.zshrc"
 
 	if [[ ! -f "$dotfile" || ! -w "$dotfile" ]]; then
@@ -62,17 +62,15 @@ _install() {
 		return 1
 	fi
 
-	_append_file "$dotfile" "$pattern" cat <<~EOS
-# Load cli-utils
-${pattern}
-EOS
+	_append_file "$dotfile" "$pattern" <<< "$pattern"
 }
 
 {
-	[[ "${zsh_eval_context[-1]}" == "file" ]] && (
-		builtin printf "run %s from your shell or via a script\n" "${0:t}" >&2
+	if [[ "${zsh_eval_context[-1]}" == "file" ]]; then
+		builtin printf "fatal: run %s from your shell or via a script\n" "${0:t}" >&2
 		return 1
-	)
+	fi
+
 	_install "${0:a}"
 } always {
 	unset -f _append_file _install

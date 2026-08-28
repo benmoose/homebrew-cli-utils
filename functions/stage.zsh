@@ -22,13 +22,14 @@ local -r msg="Staging $curr_b" _err=$(mktemp -q -t="${0:t}")
 setopt no_monitor
 
 () {
-	git checkout -q staging && \
-		git fetch -q && \
-		git reset -q --hard origin/staging && \
-		git merge -q --no-edit "${curr_b}" && \
-		git push -q origin staging && \
+	git checkout -q staging &&
+		git fetch -q &&
+		git reset -q --hard origin/staging &&
+		git merge -q --no-edit "${curr_b}" &&
+		git push -q origin staging &&
 		git checkout -q "${curr_b}"
-} 2>"${_err}" >/dev/null & local -r pid="${!}"
+} 2>"${_err}" >/dev/null &
+local -r pid="${!}"
 
 trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
 trap 'rm -f "${_err}"' EXIT

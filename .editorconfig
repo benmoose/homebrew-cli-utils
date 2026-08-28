@@ -17,17 +17,13 @@ indent_style  = tab
 trim_trailing_whitespace = false
 
 [*.rb]
-indent_size = 4
+indent_size   = 4
+indent_style  = space
 
 [src/data/*]
 insert_final_newline  = false
 
 [*.zsh]
-indent_size   = 4
-indent_style  = tab
-shell_variant = zsh
-
-[functions/**]
-indent_size   = 4
+indent_size   = 2
 indent_style  = tab
 shell_variant = zsh

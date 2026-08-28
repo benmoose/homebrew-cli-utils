@@ -15,7 +15,8 @@ local -r \
 	_err=$(mktemp -q -t="${0:t}")
 
 setopt no_monitor
-gh pr view --web 2> "${_err}" > /dev/null & local -r pid="${!}"
+gh pr view --web 2>"${_err}" >/dev/null &
+local -r pid="${!}"
 trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
 trap 'rm -f "${_err}"' EXIT
 

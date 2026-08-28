@@ -5,9 +5,7 @@
 *.md    text eol=lf
 *.yaml  text eol=lf
 *.yml   text eol=lf
-
-src/** linguist-detectable
-functions/** text eol=lf linguist-language=zsh
+*.txt   text eol=lf
 
 # -- Export: exclude from release archives ---
 .editorconfig   export-ignore
