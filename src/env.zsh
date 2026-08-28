@@ -1,5 +1,4 @@
 set -a
-CLI_UTILS_DIR="${${(%):-%N}:a:h:h:h}"
 CR=$(tput cr)
 EL=$(tput el)
 RED=$(tput setaf 1)

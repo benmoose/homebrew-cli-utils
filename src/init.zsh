@@ -4,7 +4,9 @@
 	exit 1
 )
 emulate -L zsh
+
 0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
+[[ -n "$CLI_UTILS_DIR" ]] || declare -gxr CLI_UTILS_DIR="${0:a:h}"
 
 _init() {
 	local -r func_dir="${1:h}/share/zsh/site-functions"
