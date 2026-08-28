@@ -22,5 +22,5 @@ local -i t
 		\sleep 0.042
 	done
 } always {
-	builtin echo "$(\tput cnorm)"
+	\tput cnorm
 }

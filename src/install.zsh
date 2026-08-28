@@ -62,7 +62,7 @@ _install() {
 		return 1
 	fi
 
-	_append_file "$dotfile" "$pattern" cat <<EOS
+	_append_file "$dotfile" "$pattern" cat <<~EOS
 # Load cli-utils
 ${pattern}
 EOS
