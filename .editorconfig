@@ -3,23 +3,23 @@ root = true
 
 [*]
 charset                   = utf-8
+end_of_line               = lf
+insert_final_newline      = true
 indent_size               = 2
 indent_style              = space
-insert_final_newline      = true
 trim_trailing_whitespace  = true
 
 [Makefile]
 indent_size   = 4
 indent_style  = tab
 
-[src/*.{sh,zsh}]
-end_of_line = lf
+[*.md]
+trim_trailing_whitespace = false
+
+[*.rb]
+indent_size = 4
 
 [src/{public,private}/*]
 indent_size   = 4
 indent_style  = tab
 shell_variant = zsh
-end_of_line   = lf
-
-[*.rb]
-indent_size = 4
