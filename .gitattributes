@@ -7,8 +7,7 @@
 *.yml   text eol=lf
 
 src/** linguist-detectable
-src/{public,private}/* text eol=lf
-src/{public,private}/* linguist-language=zsh
+functions/** text eol=lf linguist-language=zsh
 
 # -- Export: exclude from release archives ---
 .editorconfig   export-ignore

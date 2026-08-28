@@ -19,7 +19,15 @@ trim_trailing_whitespace = false
 [*.rb]
 indent_size = 4
 
-[src/{public,private}/*]
+[src/data/*]
+insert_final_newline  = false
+
+[*.zsh]
+indent_size   = 4
+indent_style  = tab
+shell_variant = zsh
+
+[functions/**]
 indent_size   = 4
 indent_style  = tab
 shell_variant = zsh
