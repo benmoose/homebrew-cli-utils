@@ -29,42 +29,39 @@ brew "<formula>"
 
 ```
 .
-├── bin
-│   └── install-cli-utils -> ../libexec/install.zsh
-├── init -> share/cli-utils/init.zsh
-├── INSTALL_RECEIPT.json
-├── libexec
-│   └── install.zsh
+├── Formula
+│   └── cli-utils.rb
+├── functions
+│   ├── com.zsh
+│   ├── cos.zsh
+│   ├── gppl.zsh
+│   ├── gsy.zsh
+│   ├── gtop.zsh
+│   ├── gvel.zsh
+│   ├── private
+│   │   ├── _err.zsh
+│   │   ├── _git_current_branch.zsh
+│   │   ├── _git_main_branch.zsh
+│   │   ├── _git_repo.zsh
+│   │   └── _spinner.zsh
+│   ├── rbm.zsh
+│   ├── rsm.zsh
+│   ├── rss.zsh
+│   ├── stage.zsh
+│   ├── uuid.zsh
+│   ├── vpr.zsh
+│   └── vr.zsh
 ├── LICENSE
+├── Makefile
 ├── README.md
-├── sbom.spdx.json
-└── share
-    ├── cli-utils
-    │   ├── init-env.zsh
-    │   ├── init.zsh
+└── src
+    ├── data
     │   └── spinners.txt
-    └── zsh
-        └── site-functions
-            ├── _err
-            ├── _git_current_branch
-            ├── _git_main_branch
-            ├── _git_repo
-            ├── _spinner
-            ├── com
-            ├── cos
-            ├── gppl
-            ├── gsy
-            ├── gtop
-            ├── gvel
-            ├── rbm
-            ├── rsm
-            ├── rss
-            ├── stage
-            ├── uuid
-            ├── vpr
-            └── vr
+    ├── env.zsh
+    ├── init.zsh
+    └── install.zsh
 
-7 directories, 28 files
+6 directories, 26 files
 ```
 
 ### Updating formula
