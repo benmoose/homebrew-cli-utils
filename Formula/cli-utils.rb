@@ -16,6 +16,7 @@ class CliUtils < Formula
     zsh_function.install Dir["src/private/*"]
     zsh_function.install Dir["src/public/*"]
 
+    pkgshare.install "src/spinners.txt"
     pkgshare.install "src/init-env.zsh"
     pkgshare.install "src/init.zsh"
     prefix.install_symlink pkgshare/"init.zsh" => "init"

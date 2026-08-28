@@ -1,21 +1,26 @@
 # _spinner <pid> [<msg>] - Show a spinner until the job with <pid> is finished
 builtin emulate -L zsh
-
 [[ -t 1 ]] || return
-[[ -n "${1}" ]] || return 1
+[[ -n "$1" ]] || return 1
+
+echo "[DEBUG] CLI_UTILS_DIR:$CLI_UTILS_DIR"
+local -ar spinners=("$(<$CLI_UTILS_DIR/share/cli-utils/spinners.txt)")
+# local -ar spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆')
+local -r si="${SPINNER:-$RANDOM}"
+local -ar frames=( "${(ws::)spinners[(( ++(si % $#spinners) ))]}" )
 
 local -r \
-	pid_arg="${1}" \
-	msg_arg="${2}" \
-	style_arg="${3:-$CYAN}"
-
-local -ar spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆')
-local -ir si=$((RANDOM%${#spinners[@]} + 1))
-local -ar frames=( ${(ws::)spinner[$si]} )
+	pid_arg="$1" \
+	msg_arg="${2-Thinking}"
 local -i t
 
-while kill -0 "${pid_arg}" &> /dev/null; do
-	local -ir f=$((t++ % ${#frames[@]} + 1))
-	printf "${CR}%s%s${NS} %s " "${style_arg}" "${frames[$f]}" "${msg_arg}"
-	sleep 0.042
-done
+{
+	\tput civis
+	while kill -0 "${pid_arg}" &> /dev/null; do
+		printf "${CR}${BOLD}%s%s${NS} %s$DIM...$NS " \
+			"$CYAN" "${frames[((t++ % ${#frames[@]} + 1))]}" "$msg_arg"
+		sleep 0.042
+	done
+} always {
+	echo "$(tput cnorm)"
+}

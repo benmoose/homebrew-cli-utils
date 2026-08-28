@@ -1,8 +1,7 @@
 set -a
+CLI_UTILS_DIR="${${(%):-%N}:a:h:h:h}"
 CR=$(tput cr)
 EL=$(tput el)
-CIVIS=$(tput civis)
-CNORM=$(tput cnorm)
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)

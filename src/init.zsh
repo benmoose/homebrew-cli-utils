@@ -22,6 +22,9 @@ _init() {
 
 {
 	[[ "${zsh_eval_context[-1]}" == "file" ]] || return 1
+
+  typeset -g CLI_UTILS_DIR="${${(%):-%N}:a:h}"
+  echo "[DEBUG] CLI_UTILS_DIR=${CLI_UTILS_DIR}"
 	_init "${(%):-%N}"
 } always {
 	unset -f _init

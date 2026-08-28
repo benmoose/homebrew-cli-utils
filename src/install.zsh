@@ -55,7 +55,7 @@ _append_file() {
 _install() {
 	local -r \
 		pattern="source \"$(brew --prefix cli-utils)/init.zsh\"" \
-		dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
+		dotfile="${ZDOTDIR:-$HOME}/.zshrc"
 
 	if [[ ! -f "$dotfile" || ! -w "$dotfile" ]]; then
 		builtin printf "%s: %s is missing or unwritable\n" "${1:t}" "${dotfile:t}" >&2
