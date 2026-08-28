@@ -7,21 +7,20 @@ builtin emulate -L zsh
 [[ -t 1 ]] || return
 [[ -n "$1" ]] || return 1
 
-local -ar spinners=( $(<"${CLI_UTILS_DIR}/share/cli-utils/spinners.txt") )
-local -ir si=$(( ${SPINNER:-RANDOM} % $#spinners ))
-local -ar frames=( "${(ws::)spinners[(( ++si ))]}" )
+local -ar spinners=( $(<"$CLI_UTILS_DIR/share/cli-utils/spinners.txt") )
+local -ir spinner_i=$(( ${SPINNER:-RANDOM} ))
+local -ar frames=( "${(ws::)spinners[$(( spinner_i % $#spinners[@] + 1 ))]}" )
+local -r spinner_c="${SPINNER_COLOUR:-$CYAN}" \
+	pid_arg="$1" msg_arg="${2-Thinking}"
 local -i t
-local -r \
-	pid_arg="$1" \
-	msg_arg="${2-Thinking}"
 
 {
 	\tput civis
-	while kill -0 "$pid_arg" &> /dev/null; do
-		printf "${CR}${BOLD}${CYAN}%s${NS} %s$DIM...$NS " \
-			"${frames[((t++ % ${#frames[@]} + 1))]}" "$msg_arg"
-		sleep 0.042
+	while \kill -0 "$pid_arg" &> /dev/null; do
+		builtin printf "${CR}${BOLD}%s%s$NS %s$DIM...$NS " \
+			"$spinner_c" "${frames[$(( t++ % $#frames[@] + 1 ))]}" "$msg_arg"
+		\sleep 0.042
 	done
 } always {
-	echo "$(tput cnorm)"
+	builtin echo "$(\tput cnorm)"
 }
