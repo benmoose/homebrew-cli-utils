@@ -17,7 +17,7 @@ local -r \
 
 {
 	\tput civis
-	while kill -0 "${pid_arg}" &> /dev/null; do
+	while kill -0 "$pid_arg" &> /dev/null; do
 		printf "${CR}${BOLD}${CYAN}%s${NS} %s$DIM...$NS " \
 			"${frames[((t++ % ${#frames[@]} + 1))]}" "$msg_arg"
 		sleep 0.042
