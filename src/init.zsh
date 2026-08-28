@@ -4,6 +4,7 @@
 	exit 1
 )
 emulate -L zsh
+0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
 
 _init() {
 	local -r func_dir="${1:h}/share/zsh/site-functions"
@@ -23,9 +24,7 @@ _init() {
 {
 	[[ "${zsh_eval_context[-1]}" == "file" ]] || return 1
 
-  typeset -g CLI_UTILS_DIR="${${(%):-%N}:a:h}"
-  echo "[DEBUG] CLI_UTILS_DIR=${CLI_UTILS_DIR}"
-	_init "${(%):-%N}"
+	_init "${0:a}"
 } always {
 	unset -f _init
 }

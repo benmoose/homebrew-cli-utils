@@ -4,7 +4,7 @@
 	exit 1
 )
 emulate -L zsh -o err_return
-0="${(%):-%N}"
+0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
 
 _append_file() {
 	local \
@@ -73,7 +73,7 @@ EOS
 		builtin printf "run %s from your shell or via a script\n" "${0:t}" >&2
 		return 1
 	)
-	_install "$0"
+	_install "${0:a}"
 } always {
 	unset -f _append_file _install
 }

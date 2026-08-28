@@ -18,7 +18,7 @@ if ! git show-ref -q --exists --no-tags --no-head refs/remotes/origin/staging; t
 	return 1
 fi
 
-local -r msg="Staging ${curr_b}..." _err=$(mktemp -q -t="${0:t}")
+local -r msg="Staging $curr_b" _err=$(mktemp -q -t="${0:t}")
 setopt no_monitor
 
 () {

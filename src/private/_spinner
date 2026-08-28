@@ -1,24 +1,25 @@
 # _spinner <pid> [<msg>] - Show a spinner until the job with <pid> is finished
+#
+# The environment variable `SPINNER` selects the spinners.txt line number to use,
+# for the animation. If unset then a line is randomly chosen.
 builtin emulate -L zsh
+
 [[ -t 1 ]] || return
 [[ -n "$1" ]] || return 1
 
-echo "[DEBUG] CLI_UTILS_DIR:$CLI_UTILS_DIR"
-local -ar spinners=("$(<$CLI_UTILS_DIR/share/cli-utils/spinners.txt)")
-# local -ar spinners=('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' '⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆')
-local -r si="${SPINNER:-$RANDOM}"
-local -ar frames=( "${(ws::)spinners[(( ++(si % $#spinners) ))]}" )
-
+local -ar spinners=( $(<"${CLI_UTILS_DIR}/share/cli-utils/spinners.txt") )
+local -ir si=$(( ${SPINNER:-RANDOM} % $#spinners ))
+local -ar frames=( "${(ws::)spinners[(( ++si ))]}" )
+local -i t
 local -r \
 	pid_arg="$1" \
 	msg_arg="${2-Thinking}"
-local -i t
 
 {
 	\tput civis
 	while kill -0 "${pid_arg}" &> /dev/null; do
-		printf "${CR}${BOLD}%s%s${NS} %s$DIM...$NS " \
-			"$CYAN" "${frames[((t++ % ${#frames[@]} + 1))]}" "$msg_arg"
+		printf "${CR}${BOLD}${CYAN}%s${NS} %s$DIM...$NS " \
+			"${frames[((t++ % ${#frames[@]} + 1))]}" "$msg_arg"
 		sleep 0.042
 	done
 } always {

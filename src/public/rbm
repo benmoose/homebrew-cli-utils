@@ -20,7 +20,7 @@ setopt no_monitor
 local -r pid="${!}"
 trap 'kill "${pid}"; return 130' INT TERM
 
-local -r msg="rebase onto origin/${main_b}..."
+local -r msg="rebase onto origin/${main_b}"
 
 _spinner "${pid}" "${msg}"
 
