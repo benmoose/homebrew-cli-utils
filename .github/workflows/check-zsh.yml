@@ -1,0 +1,31 @@
+run-name: Check Zsh scripts and functions
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  zsh-lint:
+    runs-on: ubuntu-latest
+    name: Lint Zsh functions
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+    - uses: actions/setup-go@v7
+      with:
+        go-version: "1.27"
+    - name: Install Zsh Lint
+      run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
+    - name: Check Zsh semantics
+      run: zsh-lint functions/*.zsh functions/private/*.zsh

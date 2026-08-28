@@ -1,3 +1,4 @@
+# _git_main_branch - returns the main/default branch ref name for the current repository.
 builtin emulate -L zsh
 
 if ! _git_repo; then return 1; fi
@@ -12,7 +13,7 @@ done
 
 for remote in origin upstream; do
 	ref=$(git rev-parse --abbrev-ref --quiet "${remote}/HEAD")
-	if [[ "${ref}" == ${remote}/* ]]; then
+	if [[ "$ref" == $remote/* ]]; then
 		echo "${ref#${remote}/}"
 		return 0
 	fi

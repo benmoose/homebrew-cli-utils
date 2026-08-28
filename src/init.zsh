@@ -5,7 +5,7 @@
 )
 emulate -L zsh
 
-0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
+# 0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
 [[ -n "$CLI_UTILS_DIR" ]] || declare -gxr CLI_UTILS_DIR="${0:a:h}"
 
 _init() {

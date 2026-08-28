@@ -2,4 +2,4 @@
 
 builtin emulate -L zsh
 
-builtin printf "${RED}%s${NS}\n" "${*}" >&2
+builtin printf "$RED%s$NS\n" "$*" >&2
