@@ -3,7 +3,7 @@ default: help
 
 .PHONY: fmt
 fmt: install ## Check format of zsh scripts and functions
-	@zsh-lint ./src/*.zsh ./src/public/* ./src/private/*
+	@zsh-lint ./src/*.zsh ./functions/**/*.zsh
 
 .PHONY: install
 install:
