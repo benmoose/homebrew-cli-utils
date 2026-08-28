@@ -1,18 +1,16 @@
 #!/usr/bin/env zsh
+[[ -n "$ZSH_VERSION" ]] || (
+	builtin printf "fatal: expect zsh shell\n" >&2
+	exit 1
+)
 emulate -L zsh
-0="${(%):-%N}"
-
-if [[ -z "$ZSH_VERSION" ]]; then
-	command printf "${0:t}: expect zsh shell\n" >&2
-	return 1
-fi
 
 _init() {
 	local -r func_dir="${1:h}/share/zsh/site-functions"
 	if ! [[ -d "$func_dir" ]]; then
-		command printf \
-			"%s: installed functions not found, expect directory at %s.\nTry running \"brew reinstall cli-utils\"\n" \
-			"${1:t}" "$func_dir" >&2
+		builtin printf \
+			"%s: installed functions not found, expect directory at %s.\nTry running '%q'\n" \
+			"${1:t}" "$func_dir" "brew reinstall cli-utils" >&2
 		return 1
 	fi
 
@@ -24,7 +22,7 @@ _init() {
 
 {
 	[[ "${zsh_eval_context[-1]}" == "file" ]] || return 1
-	_init "$0"
+	_init "${(%):-%N}"
 } always {
 	unset -f _init
 }

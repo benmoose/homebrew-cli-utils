@@ -11,11 +11,9 @@ local -r \
 	head_obj="$(git rev-parse --short --verify -q HEAD)" \
 	upstream_obj="$(git rev-parse --short --verify -q HEAD@{upstream})"
 
-if [[ "${head_obj}" != "${upstream_obj}" ]]; then
-	[[ "${1}" != "-q" ]] && _err "✕ upstream diverges (${upstream_obj})"
+if [[ "$head_obj" != "$upstream_obj" ]]; then
+	[[ "$1" == "-q" ]] || _err "upstream branch diverges, $upstream_obj"
 	return 1
 fi
 
-[[ "${1}" != "-q" ]] && printf "Up to date\n"
-
-return 0
+[[ "$1" == "-q" ]] || printf "up to date with upstream branch\n"
