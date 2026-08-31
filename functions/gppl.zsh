@@ -6,4 +6,4 @@ set -o pipefail
 
 if ! _git_repo; then return 1; fi
 
-git shortlog --no-merges --numbered --since="1 year ago" --summary | cat
+git shortlog --no-merges --numbered --since='1 year ago' --summary | cat

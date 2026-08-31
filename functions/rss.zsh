@@ -19,8 +19,8 @@ local -r pid="${!}"
 
 trap 'kill "${pid}"; return 130'
 
-local -r msg="reset to origin/staging"
-_spinner "$pid" "$msg"
+local -r msg="reset staging branch to origin"
+_spinner "$pid" "$msg" "$YELLOW"
 
 if ! wait "${pid}" 2>/dev/null; then
 	printf "%s%s×%s %s error\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"

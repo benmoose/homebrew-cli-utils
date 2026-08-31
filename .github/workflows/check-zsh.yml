@@ -16,32 +16,57 @@ concurrency:
 
 jobs:
   zsh-check:
-    name: Check Zsh scripts
+    runs-on: ubuntu-latest
+    name: Check Zsh syntax
     steps:
-    - uses: actions/checkout@v7
-      with:
-        persist-credentials: false
-    - name: Check Zsh syntax
-      run: |
-        status=0
-        while IFS= read -r -d '' file; do
-          echo "::group::${file}"
-          zsh -f -n -- "${file}" || status=1
-          echo "::endgroup::"
-        done < <(find . -type f -name '[^.]*.zsh' -not -path './.git/*' -print0)
-        exit $status
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install zsh
+        run: sudo apt update && sudo apt install -y zsh
+      - name: Zsh version
+        continue-on-error: true
+        run: |
+          which zsh
+          zsh --version
+      - name: Check zsh syntax
+        run: |
+          checked=0; err=0
+          while read -r file; do
+            if ! err="$(zsh -fn -- "$file" 2>&1)"; then
+              echo "::error file=${file}::${err}"; ((++err))
+            fi; ((++checked))
+          done < <(find . -name '[^.]*.zsh' -type f)
+          echo "Checked ${checked:-0} .zsh files, ${err:-0} errors"
+          [[ $err -eq 0 ]] || exit 1
 
   zsh-lint:
     runs-on: ubuntu-latest
     name: Lint Zsh functions
     steps:
-    - uses: actions/checkout@v7
-      with:
-        persist-credentials: false
-    - uses: actions/setup-go@v7
-      with:
-        go-version: "1.27"
-    - name: Install Zsh Lint
-      run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
-    - name: Run Zsh Lint
-      run: zsh-lint functions/*.zsh functions/private/*.zsh
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+      - name: Install zsh-lint
+        run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
+      - name: Check semantics functions
+        run: zsh-lint --format=json functions/*.zsh functions/private/*.zsh > ${{ runner.temp }}/${{ job.check_run_id }}.json
+      - name: Linter output
+        env:
+          NO_COLOR: ${{ true }}
+        run: |
+          out="${{ runner.temp }}/${{ job.check_run_id }}.json"
+          echo "Found **$(jq '.summary.errors ' "$out")** errors" >> $GITHUB_STEP_SUMMARY
+          n=$(jq '.diagnostics | length' "$out")
+          for ((i=0; i < $n; i++)); do
+            err=$(jq -c '.diagnostics[$i]' "$out")
+            file=$(jq '.file' <<< $err)
+            line=$(jq '.range.start.line' <<< $err)
+            endLine=$(jq '.range.end.line' <<< $err)
+            title=$(jq '.rule' <<< $err)
+            msg=$(jq '.message' <<< $err)
+            echo "::error file=${file},line=${line},endLine=${endLine},title=${title}::${msg}"
+          done
