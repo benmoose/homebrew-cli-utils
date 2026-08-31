@@ -3,7 +3,8 @@ default: help
 
 .PHONY: fmt
 fmt: install ## Check format of zsh scripts and functions
-	@zsh-lint ./src/*.zsh ./functions/**/*.zsh
+	@find . -name "[^.]*.zsh" -type f -print0 | xargs -0 -n1 zsh -fn --
+	@find . -name "[^.]*.zsh" -type f -print0 | xargs -0 -n1 "$(go env GOPATH)/bin/zsh-lint"
 
 .PHONY: install
 install:

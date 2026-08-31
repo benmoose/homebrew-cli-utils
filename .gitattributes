@@ -1,15 +1,15 @@
 *       text=auto
-*.sh    text eol=lf
-*.zsh   text eol=lf
-*.rb    text eol=lf
 *.md    text eol=lf
+*.rb    text eol=lf
+*.sh    text eol=lf
+*.txt   text eol=lf
 *.yaml  text eol=lf
 *.yml   text eol=lf
-*.txt   text eol=lf
+*.zsh   text eol=lf
 
 # -- Export: exclude from release archives ---
-.editorconfig   export-ignore
 .github/        export-ignore
+.editorconfig   export-ignore
 .gitattributes  export-ignore
 .gitignore      export-ignore
 Makefile        export-ignore

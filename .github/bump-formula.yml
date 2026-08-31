@@ -1,6 +1,6 @@
 on:
   push:
-    tags: 'v*'
+    tags: 'v*.*.*'
   # Alternatively, trigger this workflow after a stable release has been published:
   #release:
   #  types: [ released ]

@@ -1,0 +1,47 @@
+run-name: Check Zsh scripts and functions
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  zsh-check:
+    name: Check Zsh scripts
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+    - name: Check Zsh syntax
+      run: |
+        status=0
+        while IFS= read -r -d '' file; do
+          echo "::group::${file}"
+          zsh -f -n -- "${file}" || status=1
+          echo "::endgroup::"
+        done < <(find . -type f -name '[^.]*.zsh' -not -path './.git/*' -print0)
+        exit $status
+
+  zsh-lint:
+    runs-on: ubuntu-latest
+    name: Lint Zsh functions
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+    - uses: actions/setup-go@v7
+      with:
+        go-version: "1.27"
+    - name: Install Zsh Lint
+      run: go install github.com/z-shell/zsh-lint/cmd/zsh-lint@v1.1.0
+    - name: Run Zsh Lint
+      run: zsh-lint functions/*.zsh functions/private/*.zsh
