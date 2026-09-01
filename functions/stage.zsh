@@ -31,15 +31,15 @@ setopt no_monitor
 } 2>"${_err}" >/dev/null &
 local -r pid="${!}"
 
-trap 'kill "${pid}"; rm -f "${_err}"; return 130' INT TERM
-trap 'rm -f "${_err}"' EXIT
+trap 'kill "$pid"; rm -f "$_err"; return 130' INT TERM
+trap 'rm -f "$_err"' EXIT
 
 _spinner "$pid" "$msg"
 
-if ! wait "${pid}" 2>/dev/null; then
+if ! wait "$pid" 2>/dev/null; then
 	printf "${CR}${EL}"
-	_err "${0:t}: $(<${_err})"
+	_err "${0:t}: $(<$_err)"
 	return 1
 fi
 
-printf "${CR}${EL}%s %s done\n" "${BOLD}${GREEN}✓${NS}" "${msg}"
+printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${DIM}%s...${NS} done\n" "$msg"

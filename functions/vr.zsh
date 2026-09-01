@@ -21,5 +21,5 @@ trap 'kill "$pid"; return 130' INT TERM
 _spinner "$pid" "Opening repository"
 
 if builtin wait "$pid" 2>/dev/null; then
-	printf "%s\n" "${CR}${EL}Opened repository"
+	printf "${CR}${EL}${DIM}%s...${NS} done\n" "Opened repository"
 fi
