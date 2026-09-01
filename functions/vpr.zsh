@@ -11,15 +11,15 @@ if ! which gh &>/dev/null; then
 fi
 
 local -r \
-	msg="Open pull request" \
+	msg="Opening pull request" \
 	_err=$(mktemp -q -t="${0:t}")
 
 setopt no_monitor
 gh pr view --web 2>"${_err}" >/dev/null &
-local -r pid="${!}"
+local -r pid="$!"
+
 trap 'kill "$pid"; rm -f "$_err"; return 130' INT TERM
 trap 'rm -f "$_err"' EXIT
-
 _spinner "$pid" "$msg"
 
 if ! wait "$pid" 2>/dev/null; then
@@ -28,4 +28,4 @@ if ! wait "$pid" 2>/dev/null; then
 	return 1
 fi
 
-printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${DIM}%s...${NS} done\n" "$msg"
+printf "${CR}${EL}${BOLD}${GREEN}✓${NS} ${DIM}%s...${NS}\n" "$msg"
