@@ -10,15 +10,14 @@ builtin emulate -L zsh
 local -ar spinners=( $(<"$CLI_UTILS_DIR/share/cli-utils/spinners.txt") )
 local -ir spinner_i=$(( ${SPINNER:-RANDOM} ))
 local -ar frames=( "${(ws::)spinners[$(( spinner_i % $#spinners[@] + 1 ))]}" )
-local -r spinner_c="${SPINNER_COLOUR:-$CYAN}" \
-	pid_arg="$1" msg_arg="${2-Thinking}"
+local -r pid_arg="$1" msg_arg="${2-Thinking}" colour_arg="${3-${SPINNER_COLOUR:-$CYAN}}"
 local -i t
 
 {
 	\tput civis
 	while \kill -0 "$pid_arg" &> /dev/null; do
 		builtin printf "${CR}${BOLD}%s%s$NS %s$DIM...$NS " \
-			"$spinner_c" "${frames[$(( t++ % $#frames[@] + 1 ))]}" "$msg_arg"
+			"$colour_arg" "${frames[$(( t++ % $#frames[@] + 1 ))]}" "$msg_arg"
 		\sleep 0.042
 	done
 } always {

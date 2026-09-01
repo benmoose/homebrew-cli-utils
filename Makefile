@@ -1,14 +1,25 @@
-SHELL := /usr/bin/env zsh
 default: help
 
+SHELL := /usr/bin/env zsh
+.SHELLFLAGS := -eu -o pipefail -c
+
+export GO111MODULE=on
+GO ?= go
+GOPATH ?= $(shell $(GO) env GOPATH)
+GOBIN ?= $(GOPATH)/bin
+
 .PHONY: fmt
-fmt: install ## Check format of zsh scripts and functions
-	@find . -name "[^.]*.zsh" -type f -print0 | xargs -0 -n1 zsh -fn --
-	@find . -name "[^.]*.zsh" -type f -print0 | xargs -0 -n1 "$(go env GOPATH)/bin/zsh-lint"
+fmt: ## Check format of zsh scripts and functions
+	@for file in $(shell find . -name '*.zsh' -type f) ; do \
+		zsh -f -n -- "$$file" \
+	done
+	@echo "Checking semantics..."
+	@$(GOBIN)/zsh-lint functions/*.zsh functions/private/*.zsh
 
 .PHONY: install
-install:
-	@go install github.com/z-shell/zsh-lint/cmd/zsh-lint@latest
+install: $(GOBIN)/zsh-lint
+	@echo "Installing..."
+	@$(GO) install github.com/z-shell/zsh-lint/cmd/zsh-lint@latest
 
 .PHONY: help
 help:  ## Print this help message

@@ -1,9 +1,9 @@
 on:
   push:
     tags: 'v*.*.*'
-  # Alternatively, trigger this workflow after a stable release has been published:
-  #release:
-  #  types: [ released ]
+
+permissions:
+  contents: read
 
 jobs:
   homebrew:
@@ -11,15 +11,12 @@ jobs:
     # Skip this job in case of git pushes to prerelease tags
     if: ${{ github.event_name != 'push' || !contains(github.ref, '-') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Extract version
         id: extract-version
         # Strip a string prefix from the git tag name:
         run: |
           echo "tag-name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
       - uses: mislav/bump-homebrew-formula-action@v4
         with:
           formula-name: cli-utils
