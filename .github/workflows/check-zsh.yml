@@ -37,7 +37,7 @@ jobs:
               echo "::error file=${file}::${err}"; ((++err))
             fi; ((++checked))
           done < <(find . -name '[^.]*.zsh' -type f)
-          echo "Checked ${checked:-0} .zsh files, ${err:-0} errors"
+          echo "Checked **${checked:-0}** zsh files, **${err:-0}** errors" >> $GITHUB_STEP_SUMMARY
           [[ $err -eq 0 ]] || exit 1
 
   zsh-lint:
@@ -59,7 +59,7 @@ jobs:
           NO_COLOR: ${{ true }}
         run: |
           out="${{ runner.temp }}/${{ job.check_run_id }}.json"
-          echo "Found **$(jq '.summary.errors ' "$out")** errors" >> $GITHUB_STEP_SUMMARY
+          echo "Checked **$(jq '.summary.files' "$out")** zsh functions, **$(jq '.summary.errors ' "$out")** errors" >> $GITHUB_STEP_SUMMARY
           n=$(jq '.diagnostics | length' "$out")
           for ((i=0; i < $n; i++)); do
             err=$(jq -c '.diagnostics[$i]' "$out")

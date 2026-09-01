@@ -6,7 +6,6 @@ Homebrew installation:
 
 ```sh
 brew install benmoose/cli-utils/cli-utils
-install-cli-utils
 ```
 
 Or `brew tap benmoose/cli-utils` and then `brew install cli-utils`.
@@ -15,7 +14,7 @@ Or, in a `brew bundle` `Brewfile`:
 
 ```ruby
 tap "benmoose/cli-utils"
-brew "<formula>"
+brew "cli-utils"
 ```
 
 ## Documentation
@@ -24,6 +23,14 @@ brew "<formula>"
 
 
 ## Contributing
+
+### Linter
+
+Install [zsh-lint](https://wiki.zshell.dev/community/zsh_lint) to check zsh scripts locally.
+
+```
+go install github.com/z-shell/zsh-lint/cmd/zsh-lint@latest
+```
 
 ### Tree view
 
