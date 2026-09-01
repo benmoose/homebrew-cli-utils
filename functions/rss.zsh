@@ -16,15 +16,14 @@ setopt no_monitor
 	git fetch -q --no-auto-gc --no-tags && git reset -q --hard origin/staging
 } &
 local -r pid="${!}"
-
 trap 'kill "${pid}"; return 130'
 
 local -r msg="reset staging branch to origin"
 _spinner "$pid" "$msg" "$YELLOW"
 
 if ! wait "${pid}" 2>/dev/null; then
-	printf "%s%s×%s %s error\n" "${CR}${EL}" "${RED}" "${NS}" "${msg}"
+	printf "${CR}${EL}${BOLD}${RED}×${NS} %s ${BOLD}error${NS}\n" "${msg}"
 	return 1
 fi
 
-printf "%s%s✓%s %s done\n" "${CR}${EL}" "${GREEN}" "${NS}" "${msg}"
+printf "${CR}${EL}${BOLD}${GREEN}✓${NS} %s done\n" "$msg"
