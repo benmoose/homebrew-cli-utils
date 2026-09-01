@@ -18,7 +18,7 @@ _init() {
 	fi
 
 	export -TU FPATH fpath
-	[[ -n "${fpath[(r)$func_dir]-}" ]] || fpath+=( "${func_dir}" )
+	[[ -n "${fpath[(r)$func_dir]-}" ]] || fpath+=( " ${func_dir}" )
 	builtin autoload -Uz "$func_dir"/*(:t)
 	source "${1:h}/share/cli-utils/env.zsh"
 }
