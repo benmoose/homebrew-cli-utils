@@ -14,7 +14,7 @@ class CliUtils < Formula
   def install
     prefix.install_metafiles
 
-    zsh_function.install Dir["functions/**/*.zsh"]
+    zsh_function.install Dir["functions/**/*.zsh"].to_h { |path| [path, path.delete_prefix(".zsh")] }
 
     pkgshare.install Dir["src/*"]
     prefix.install_symlink pkgshare/"init.zsh" => "init"
