@@ -22,14 +22,14 @@ _append_file() {
 	fi
 
 	if [[ -n "$matched" ]]; then
-		local _b=$(builtin tput bold) _d=$(tput dim) _ns=$(tput sgr0)
-		builtin printf "${_d}╭╴${_ns}${_b}%s already configured for cli-utils:${_ns}\n" "${file:t}"
-
+		local _warn=$(\tput setaf 3) _b=$(\tput bold) _d=$(\tput dim) _ns=$(\tpu
+t sgr0)
+		builtin printf "${_warn}${_d}┯╸${_ns}${_warn}${_b}%s${_ns}${_warn} already loads cli-utils:$_ns\n" "${file:t}"
 		command echo "$matched" | awk \
-			-v d="$_d" -v n="$_ns" -v w="$(wc -l <"$file" | wc -c)" \
-			-F: '/^[0-9]+:/ {printf "%s╰╴%-*d:%s%s\n", d, w, n, $1, substr($0, index($0, ":") + 1); next} {print}'
-
-	return 0
+			-v d="${_warn}${_d}" -v b="${_ns}${_b}" -v w="$(grep -cF '' $file | wc -c | tr -d '[[:space:]]')" \
+			-F: '/^[0-9]+:/ {printf "%s└╴%*d: %s%s\n", d, w, $0, b, substr($0, index($0, ":") + 1); next} {print}'
+		printf "$_ns"
+		return 0
 	fi
 
 	if ! [[ -f "$file" && -w "$file" ]]; then
@@ -44,8 +44,7 @@ _append_file() {
 	fi
 
 	while read -r l; do
-		builtin echo "$l" >> "$file" && \
-		((++written))
+		builtin echo "$l" >> "$file" && ((++written))
 	done <<<"$line\n"
 
 	builtin printf "%s written, %d lines added\n" "${dotfile:t}" "$written"
@@ -54,15 +53,19 @@ _append_file() {
 
 _install() {
 	local -r \
-		pattern="source \"${1:h}/init\"" \
-		dotfile="${ZDOTDIR:-$HOME}/.zshrc"
+		pattern="source \"${1:a}/init\"" \
+		dotfile="${ZDOTDIR:-${HOME:-~}}/.zshrc"
 
 	if [[ ! -f "$dotfile" || ! -w "$dotfile" ]]; then
 		builtin printf "%s: %s is missing or unwritable\n" "${1:t}" "${dotfile:t}" >&2
 		return 1
 	fi
 
-	_append_file "$dotfile" "$pattern" <<< "$pattern"
+	_append_file "$dotfile" "$pattern" <<< "$pattern" && \
+		printf "%s─ ${dotfile:t} sources cli-utils%s\n" "$(tput dim)" "$(tput sgr0)"
+
+	source "${1:a}/init" && \
+		printf "%s─ Sourced active shell%s\n" "$(tput dim)" "$(tput sgr0)"
 }
 
 {
@@ -71,7 +74,8 @@ _install() {
 		return 1
 	fi
 
-	_install "${0:a}"
+	_install "$(brew --prefix cli-utils)" && \
+		printf "✓ Installed cli-utils\n"
 } always {
 	unset -f _append_file _install
 }

@@ -6,10 +6,10 @@
 emulate -L zsh
 
 0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
-[[ -n "$CLI_UTILS_DIR" ]] || declare -gxr CLI_UTILS_DIR="${0:a:h}"
 
 _init() {
 	local -r func_dir="${1:h}/share/zsh/site-functions"
+
 	if ! [[ -d "$func_dir" ]]; then
 		builtin printf \
 			"%s: installed functions not found, expect directory at %s.\nTry running '%q'\n" \
@@ -18,15 +18,19 @@ _init() {
 	fi
 
 	export -TU FPATH fpath
-	[[ -n "${fpath[(r)$func_dir]-}" ]] || fpath+=( " ${func_dir}" )
+	if [[ -z "${fpath[(r)$HOMEBREW_PREFIX/share/zsh/site-functions]}" && -z "${fpath[(r)$func_dir]-}" ]]; then
+		fpath=("${fpath[@]}" "$func_dir" )
+	fi
+
 	builtin autoload -Uz "$func_dir"/*(:t)
 	source "${1:h}/share/cli-utils/env.zsh"
 }
 
 {
 	[[ "${zsh_eval_context[-1]}" == "file" ]] || return 1
+	[[ -n "$CLI_UTILS_DIR" ]] || declare -gxr CLI_UTILS_DIR="${0:a:h}"
 
 	_init "${0:a}"
 } always {
-	unset -f _init
+		unset -f _init
 }
