@@ -22,8 +22,7 @@ _append_file() {
 	fi
 
 	if [[ -n "$matched" ]]; then
-		local _warn=$(\tput setaf 3) _b=$(\tput bold) _d=$(\tput dim) _ns=$(\tpu
-t sgr0)
+		local _warn=$(\tput setaf 3) _b=$(\tput bold) _d=$(\tput dim) _ns=$(\tput sgr0)
 		builtin printf "${_warn}${_d}┯╸${_ns}${_warn}${_b}%s${_ns}${_warn} already loads cli-utils:$_ns\n" "${file:t}"
 		command echo "$matched" | awk \
 			-v d="${_warn}${_d}" -v b="${_ns}${_b}" -v w="$(grep -cF '' $file | wc -c | tr -d '[[:space:]]')" \
