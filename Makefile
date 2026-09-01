@@ -11,9 +11,8 @@ GOBIN ?= $(GOPATH)/bin
 .PHONY: fmt
 fmt: ## Check format of zsh scripts and functions
 	@for file in $(shell find . -name '*.zsh' -type f) ; do \
-		zsh -f -n -- "$$file" \
+		zsh -f -n -- "$$file"; \
 	done
-	@echo "Checking semantics..."
 	@$(GOBIN)/zsh-lint functions/*.zsh functions/private/*.zsh
 
 .PHONY: install

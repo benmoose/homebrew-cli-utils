@@ -1,6 +1,7 @@
 # rss - Reset the local staging branch to the remote branch
 
 builtin emulate -L zsh
+setopt no_monitor
 
 if ! _git_repo; then return 1; fi
 
@@ -10,19 +11,17 @@ if [[ "$(_git_current_branch)" != "staging" ]]; then
 	return 1
 fi
 
-setopt no_monitor
-
 () {
 	git fetch -q --no-auto-gc --no-tags && git reset -q --hard origin/staging
 } &
-local -r pid="${!}"
-trap 'kill "${pid}"; return 130'
+local -r pid="$!"
+trap 'kill "$pid"; return 130'
 
 local -r msg="reset staging branch to origin"
 _spinner "$pid" "$msg" "$YELLOW"
 
 if ! wait "${pid}" 2>/dev/null; then
-	printf "${CR}${EL}${BOLD}${RED}×${NS} %s ${BOLD}error${NS}\n" "${msg}"
+	printf "${CR}${EL}${BOLD}${RED}×${NS} %s error\n" "${msg}"
 	return 1
 fi
 

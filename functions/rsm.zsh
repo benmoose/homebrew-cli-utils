@@ -1,6 +1,7 @@
 # rsm - Reset the local main branch to the remote branch
 
 builtin emulate -L zsh
+setopt no_monitor
 
 if ! _git_repo; then return 1; fi
 
@@ -12,8 +13,6 @@ if [[ "$main_b" != "$curr_b" ]]; then
 	_err "${0:t}: not on $main_b branch"
 	return 1
 fi
-
-setopt no_monitor
 
 () {
 	git fetch -q --no-auto-gc --no-tags && git reset -q --hard "origin/${main_b}"
